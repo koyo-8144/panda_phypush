@@ -14,7 +14,7 @@ password = 'cobotmakerspace'
 
 # Desired End-Effector Velocity [vx, vy, vz, wx, wy, wz]
 # Example: Move +Y
-V_DESIRED = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0]) 
+V_DESIRED_BASE = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0]) 
 
 # Duration to apply the velocity (seconds)
 VELOCITY_DURATION = 3.0 
@@ -26,7 +26,7 @@ PUSHSET_Q = np.array([
 ])
 
 # Recording Parameters
-SMOOTHING_WINDOW = 5  # Moving average window size
+SMOOTHING_WINDOW = 10  # Moving average window size
 
 def ensure_dirs():
     cwd = os.getcwd()
@@ -131,7 +131,7 @@ def run_push_and_velocity():
         time.sleep(2.0)
         
         # --- Step 3: Velocity Control & Recording ---
-        print(f"Starting Velocity Control: {V_DESIRED} for {VELOCITY_DURATION}s")
+        print(f"Starting Velocity Control: {V_DESIRED_BASE} for {VELOCITY_DURATION}s")
         
         ctrl = controllers.IntegratedVelocity()
         panda.start_controller(ctrl)
@@ -160,7 +160,7 @@ def run_push_and_velocity():
                 J_pinv = np.linalg.pinv(J)
                 
                 # Send Command
-                dq_cmd = J_pinv @ V_DESIRED
+                dq_cmd = J_pinv @ V_DESIRED_BASE
                 ctrl.set_control(dq_cmd)
                 
                 # --- B. Recording Logic (Fixed DT = 0.01) ---
