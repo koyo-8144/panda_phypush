@@ -18,16 +18,15 @@ V_DESIRED = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0])
 
 # Duration to apply the velocity (seconds)
 VELOCITY_DURATION = 3.0 
+DT = 0.01  # Fixed time step (1/100 Hz)
 
 # The specific joint configuration (radians)
 PUSHSET_Q = np.array([
     1.72169, -1.02605, -2.27493, -2.10522, 0.503725, 1.85432, -1.62299
 ])
 
-DT = 0.01
-
 # Recording Parameters
-SMOOTHING_WINDOW = 1  # Moving average window size
+SMOOTHING_WINDOW = 5  # Moving average window size
 
 def ensure_dirs():
     cwd = os.getcwd()
@@ -37,7 +36,7 @@ def ensure_dirs():
             os.makedirs(path)
     return cwd
 
-def save_and_plot(history_vel, history_acc, dt_list):
+def save_and_plot(history_vel, history_acc):
     """
     Saves data to CSV and plots 6-axis history.
     """
@@ -54,7 +53,8 @@ def save_and_plot(history_vel, history_acc, dt_list):
         writer.writerow(header)
         
         for i in range(len(history_vel)):
-            row = [i, dt_list[i]] + list(history_vel[i]) + list(history_acc[i])
+            # Flatten arrays for CSV writing
+            row = [i, DT] + history_vel[i].tolist() + history_acc[i].tolist()
             writer.writerow(row)
     
     print(f"Data saved to {csv_path}")
@@ -102,8 +102,10 @@ def run_push_and_velocity():
     # Buffers for recording
     history_vel = []
     history_acc = []
-    history_dt = []
     vel_smoothing_buffer = []
+    
+    # Previous state for acceleration calc
+    prev_vel_w = np.zeros(6)
 
     try:
         # --- Connect ---
@@ -135,26 +137,20 @@ def run_push_and_velocity():
         panda.start_controller(ctrl)
         model = panda.get_model()
         
-        # Capture Initial Rotation Matrix (R_start)
-        # We will use this to transform World Velocities to Local Start Velocities
+        # Capture Orientation Matrix (R_local) at the start of the push
+        # We use this to transform World Velocities -> Local Push Frame
         state0 = panda.get_state()
         O_T_EE_0 = np.array(state0.O_T_EE).reshape((4, 4), order='F')
-        R_start = O_T_EE_0[:3, :3] # 3x3 Rotation Matrix
-        R_start_T = R_start.T      # Transpose is Inverse for Rotation Matrices
+        R_local = O_T_EE_0[:3, :3]  # 3x3 Rotation Matrix
+        R_local_T = R_local.T       # Transpose = Inverse for Rotation Matrices
 
-        # Previous state trackers for finite difference
-        prev_vel_w = np.zeros(6)
-        prev_time = time.time()
-        
-        # Run control loop at 100Hz
-        with panda.create_context(frequency=1/DT) as ctx:
+        # Run control loop at exactly 100Hz
+        with panda.create_context(frequency=100.0) as ctx:
             start_time = time.time()
-            prev_time = start_time
             
             while ctx.ok():
-                current_time = time.time()
-                elapsed = current_time - start_time
-                if elapsed > VELOCITY_DURATION:
+                # Check timeout
+                if time.time() - start_time > VELOCITY_DURATION:
                     break
                 
                 # --- A. Control Logic ---
@@ -162,47 +158,45 @@ def run_push_and_velocity():
                 J_flat = model.zero_jacobian(libfranka.Frame.kEndEffector, state)
                 J = np.array(J_flat).reshape((6, 7), order='F')
                 J_pinv = np.linalg.pinv(J)
+                
+                # Send Command
                 dq_cmd = J_pinv @ V_DESIRED
                 ctrl.set_control(dq_cmd)
                 
-                # --- B. Recording Logic ---
-                # 1. Calculate dt
-                # dt = current_time - prev_time
-                # if dt <= 0: dt = 0.001 # Prevent div by zero on first tick
-                dt = DT
+                # --- B. Recording Logic (Fixed DT = 0.01) ---
                 
-                # 2. Get Real Joint Velocities (dq_actual) from state
+                # 1. Get Real Joint Velocities (dq_actual)
                 dq_actual = np.array(state.dq)
                 
-                # 3. Compute Cartesian Velocity in World Frame (V_w = J * dq)
+                # 2. Compute Cartesian Velocity in World Frame (V_w = J * dq)
                 vel_w_raw = J @ dq_actual # [vx, vy, vz, wx, wy, wz]
                 
-                # 4. Smoothing (Moving Average)
+                # 3. Smoothing (Moving Average)
                 vel_smoothing_buffer.append(vel_w_raw)
                 if len(vel_smoothing_buffer) > SMOOTHING_WINDOW:
                     vel_smoothing_buffer.pop(0)
                 vel_w_smoothed = np.mean(vel_smoothing_buffer, axis=0)
                 
-                # 5. Compute Acceleration in World Frame (Finite Difference)
-                acc_w = (vel_w_smoothed - prev_vel_w) / dt
+                # 4. Compute Acceleration in World Frame (Finite Difference with Fixed DT)
+                acc_w = (vel_w_smoothed - prev_vel_w) / DT
                 prev_vel_w = vel_w_smoothed.copy()
-                prev_time = current_time
                 
-                # 6. Transform to Local Start Frame
-                # V_local = R_start_inverse * V_world
-                # We apply rotation to Linear ([:3]) and Angular ([3:]) parts separately
-                lin_local = R_start_T @ vel_w_smoothed[:3]
-                ang_local = R_start_T @ vel_w_smoothed[3:]
-                vel_local = np.concatenate([lin_local, ang_local])
+                # # 5. Transform to Local Start Frame (Rotation only)
+                # # Apply rotation to Linear ([:3]) and Angular ([3:]) parts separately
+                # lin_vel_local = R_local_T @ vel_w_smoothed[:3]
+                # ang_vel_local = R_local_T @ vel_w_smoothed[3:]
+                # vel_local = np.concatenate([lin_vel_local, ang_vel_local])
                 
-                lin_acc_local = R_start_T @ acc_w[:3]
-                ang_acc_local = R_start_T @ acc_w[3:]
-                acc_local = np.concatenate([lin_acc_local, ang_acc_local])
+                # lin_acc_local = R_local_T @ acc_w[:3]
+                # ang_acc_local = R_local_T @ acc_w[3:]
+                # acc_local = np.concatenate([lin_acc_local, ang_acc_local])
+
+                vel_local = vel_w_smoothed
+                acc_local = acc_w 
                 
-                # 7. Store
+                # 6. Store
                 history_vel.append(vel_local)
                 history_acc.append(acc_local)
-                history_dt.append(dt)
 
         print("Velocity motion finished.")
         panda.stop_controller()
@@ -213,15 +207,18 @@ def run_push_and_velocity():
         gripper.move(0.08, 0.2)
         
         # --- Step 5: Save and Visualize ---
-        print("Processing data...")
-        save_and_plot(history_vel, history_acc, history_dt)
+        if len(history_vel) > 0:
+            print("Processing data...")
+            save_and_plot(history_vel, history_acc)
+        else:
+            print("No data recorded.")
 
     except Exception as e:
         print(f"An error occurred: {e}")
         # Attempt to save whatever data we captured before crash
         if len(history_vel) > 0:
             print("Emergency Save of captured data...")
-            save_and_plot(history_vel, history_acc, history_dt)
+            save_and_plot(history_vel, history_acc)
 
 if __name__ == "__main__":
     run_push_and_velocity()
