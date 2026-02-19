@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import panda_py
 from panda_py import libfranka, controllers
+from const import PUSHSET_POSE, PUSHSET_Q
 
 # --- 1. Configuration ---
 hostname = '172.22.2.3'
@@ -20,16 +21,6 @@ V_DESIRED_LOCAL = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0])
 VELOCITY_DURATION = 3.0 
 DT = 0.01  # Fixed time step (1/100 Hz)
 
-# The specific joint configuration (radians)
-PUSHSET_Q = np.array([
-    1.75714665,
-    -1.08043168, 
-    -2.39465545, 
-    -2.05762684,  
-    0.50821188,  
-    1.82329159,
-    -1.7067362
-])
 
 SMOOTHING_WINDOW = 5 
 

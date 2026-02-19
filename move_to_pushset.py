@@ -4,6 +4,7 @@ import numpy as np
 import panda_py
 from panda_py import libfranka, constants
 from matplotlib import pyplot as plt
+from const import PUSHSET_POSE, PUSHSET_Q, INTER_Q, USE_IK
 
 # 1. Configuration
 hostname = '172.22.2.3'
@@ -12,39 +13,6 @@ password = 'cobotmakerspace'
 
 # The specific joint configuration (radians)
 # q: [J1, J2, J3, J4, J5, J6, J7]
-
-
-PUSHSET_Q = np.array([
-    2.28863474,
-    -0.77167205, 
-    -2.82050174, 
-    -2.16177243,  
-    0.91667777, 
-    1.61128167,
-    -2.03436274,
-])
-
-INTER_Q = np.array([
-    2.2647625646576617, 
-    -0.7309278836584928, 
-    -2.8560501611609204, 
-    -2.1939660246999635, 
-    0.8481742448442512, 
-    1.6207939107285603, 
-    -2.0477857253259777
-])
-
-
-
-PUSHSET_POSE = np.array([
-    [ 0.,  1., 0.,  0.41308047,],
-    [ 0.,  0., 1., -0.01612842,],
-    [ 1.,  0., 0.,  0.07658673,],
-    [ 0.,  0., 0.,          1.,]
-])
-
-
-USE_IK = 0
 
 
 

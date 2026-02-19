@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 import panda_py
 from panda_py import libfranka, controllers
+from const import PUSHSET_POSE, PUSHSET_Q
 
 # ==========================================
 # 1. CONFIGURATION
@@ -22,15 +23,10 @@ V_DESIRED_BASE = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0])
 PUSH_AXIS_IDX = 1  # 0=X, 1=Y, 2=Z (Must match non-zero element in V_DESIRED)
 
 # Duration parameters
-VELOCITY_DURATION = 3.0 
+VELOCITY_DURATION = 5.0 
 DT = 0.01  # Fixed time step (1/100 Hz)
 
-# The specific joint configuration (radians)
-PUSHSET_Q = np.array([
-    1.81007,-1.06737,-2.4372,-2.03236,0.449045,1.7917,-1.76067
-])
-
-SMOOTHING_WINDOW = 7
+SMOOTHING_WINDOW = 10
 MODEL_PATH = 'trained_models/transformer_epoch500.pth'
 
 # ==========================================
@@ -124,17 +120,16 @@ def load_model(device):
 def process_and_inference(model, history_vel, history_acc, device):
     """
     Updates:
-    1. Finds peak acceleration (t_peak).
-    2. Extracts Inference Window using Reference Logic:
-       - Start: t_peak + t_before (15)
-       - End:   t_peak + t_after  (35)
-       - Len:   20 steps
+    1. Finds the minimum acceleration (negative peak / maximum deceleration).
+    2. Extracts Inference Window:
+       - Start: t_peak - 2
+       - End:   t_peak + 18 (Adjusted to ensure exactly 20 steps)
     3. Extracts a broader 100-step context for visualization/debugging.
     """
-    # --- Configuration from Reference Code ---
-    T_BEFORE = 15
-    T_AFTER = 35
-    WINDOW_LEN = T_AFTER - T_BEFORE  # 20 steps
+    # --- Configuration ---
+    T_BEFORE = -2
+    T_AFTER = 18 
+    WINDOW_LEN = T_AFTER - T_BEFORE  # Exactly 20 steps
 
     if len(history_vel) < 100:
         print(f"⚠️ Not enough data (Steps: {len(history_vel)}). Need > 100.")
@@ -144,29 +139,26 @@ def process_and_inference(model, history_vel, history_acc, device):
     np_vel_full = np.array(history_vel)
     np_acc_full = np.array(history_acc)
 
-    # 1. Find Peak Acceleration Index on the Pushing Axis
-    # Base Y = Index 1 (Matches your V_DESIRED [0, 0.08, 0])
+    # 1. Find Negative Peak Acceleration Index (Impact Deceleration)
+    # Using argmin to match your torch.argmin logic
     acc_push_axis = np_acc_full[:, PUSH_AXIS_IDX]
-    t_peak = np.argmax(np.abs(acc_push_axis))
+    t_peak = int(np.argmin(acc_push_axis))
     
-    print(f"--- Detected Impact Peak at Step {t_peak} ---")
+    print(f"--- Detected Impact (Negative Peak) at Step {t_peak} ---")
 
     # 2. Define Inference Indices (Absolute)
-    # Reference Logic: start = peak + t_before
-    inf_start_abs = t_peak + T_BEFORE
-    inf_end_abs = t_peak + T_AFTER
+    inf_start_abs = max(0, t_peak + T_BEFORE)
+    inf_end_abs = inf_start_abs + WINDOW_LEN
     
-    # Safety Check: Ensure we don't go out of bounds
+    # Safety Check: Ensure we don't go out of bounds at the end
     if inf_end_abs > len(np_vel_full):
-        print(f"⚠️ Peak is too close to end of recording. (Peak: {t_peak}, Need: {inf_end_abs})")
-        # Fallback: Shift window back to fit
+        print(f"⚠️ Peak is too close to end of recording. Shifting window back.")
         shift = inf_end_abs - len(np_vel_full)
         inf_start_abs -= shift
         inf_end_abs -= shift
 
     # 3. Define 100-Step Context Window (Relative to Inference Window)
-    # We want the context to surround the inference window comfortably.
-    # Let's start the context 40 steps before the inference window starts.
+    # Start context 40 steps before the inference window for good visual padding
     ctx_start_abs = max(0, inf_start_abs - 40)
     ctx_end_abs = ctx_start_abs + 100
     
@@ -180,7 +172,7 @@ def process_and_inference(model, history_vel, history_acc, device):
     vel_100 = np_vel_full[ctx_start_abs:ctx_end_abs]
     acc_100 = np_acc_full[ctx_start_abs:ctx_end_abs]
 
-    # 20-step Inference (Extracted directly from full history for precision)
+    # 20-step Inference
     vel_20 = np_vel_full[inf_start_abs:inf_end_abs]
     acc_20 = np_acc_full[inf_start_abs:inf_end_abs]
 
@@ -194,40 +186,13 @@ def process_and_inference(model, history_vel, history_acc, device):
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     csv_path = os.path.join(cwd, "csv_data", f"inference_context_{timestamp}.csv")
     
-    with open(csv_path, mode='w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(['step_local', 'v_y', 'a_y', 'is_inference_region'])
-        for i in range(len(vel_100)):
-            is_inf = 1 if (i >= viz_inf_start and i < viz_inf_end) else 0
-            writer.writerow([i, vel_100[i, PUSH_AXIS_IDX], acc_100[i, PUSH_AXIS_IDX], is_inf])
+    # with open(csv_path, mode='w', newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(['step_local', 'v_y', 'a_y', 'is_inference_region'])
+    #     for i in range(len(vel_100)):
+    #         is_inf = 1 if (i >= viz_inf_start and i < viz_inf_end) else 0
+    #         writer.writerow([i, vel_100[i, PUSH_AXIS_IDX], acc_100[i, PUSH_AXIS_IDX], is_inf])
     
-    # --- PLOT ---
-    fig, axes = plt.subplots(2, 1, figsize=(10, 8))
-    steps_100 = np.arange(len(vel_100))
-    steps_20 = np.arange(viz_inf_start, viz_inf_end)
-
-    # Plot Velocity Y
-    axes[0].plot(steps_100, vel_100[:, PUSH_AXIS_IDX], 'b-', alpha=0.3, label='Context (100)')
-    axes[0].plot(steps_20, vel_20[:, PUSH_AXIS_IDX], 'b-', linewidth=3, label='Model Input (20)')
-    axes[0].set_title(f"Velocity Y: Highlighted Inference Window (Peak+{T_BEFORE} to Peak+{T_AFTER})")
-    axes[0].legend()
-
-    # Plot Acceleration Y
-    axes[1].plot(steps_100, acc_100[:, PUSH_AXIS_IDX], 'r-', alpha=0.3, label='Context (100)')
-    axes[1].plot(steps_20, acc_20[:, PUSH_AXIS_IDX], 'r-', linewidth=3, label='Model Input (20)')
-    
-    # Mark the peak location relative to this plot
-    peak_local = t_peak - ctx_start_abs
-    if 0 <= peak_local < len(vel_100):
-        axes[1].axvline(peak_local, color='k', linestyle='--', alpha=0.5, label='Impact Peak')
-
-    axes[1].set_title(f"Acceleration Y: Peak at {peak_local}, Window starts +{T_BEFORE}")
-    axes[1].legend()
-
-    plt.tight_layout()
-    plt.savefig(os.path.join(cwd, "vis", f"inference_highlight_{timestamp}.png"))
-    plt.close()
-
     # --- INFERENCE ---
     if model is not None:
         if len(vel_20) != 20:
@@ -240,11 +205,56 @@ def process_and_inference(model, history_vel, history_acc, device):
 
         with torch.no_grad():
             output = model(t_acc, t_vel)
+            mass_est = output[0, 0].item()
+            mu_est = output[0, 1].item()
         
         print("\n" + "="*40)
-        print(f"  PREDICTED MASS: {output[0, 0].item():.4f} kg")
-        print(f"  PREDICTED MU:   {output[0, 1].item():.4f}")
+        print("    🔮 PREDICTION RESULTS 🔮")
+        print("="*40)
+        print(f"  MASS: {mass_est:.4f} kg")
+        print(f"  MU:   {mu_est:.4f}")
         print("="*40 + "\n")
+
+        # --- PLOT ---
+        fig, axes = plt.subplots(2, 1, figsize=(10, 8))
+        
+        # --- NEW: Add overarching figure title with prediction results ---
+        fig.suptitle(f"Prediction: Mass = {mass_est:.4f} kg  |  Friction (Mu) = {mu_est:.4f}", 
+                     fontsize=14, fontweight='bold')
+
+        steps_100 = np.arange(len(vel_100))
+        steps_20 = np.arange(viz_inf_start, viz_inf_end)
+
+        # Plot Velocity
+        axes[0].plot(steps_100, vel_100[:, PUSH_AXIS_IDX], 'b-', alpha=0.3, label='Context (100)')
+        axes[0].plot(steps_20, vel_20[:, PUSH_AXIS_IDX], 'b-', linewidth=3, label='Model Input (20)')
+        axes[0].set_title(f"Velocity: Highlighted Inference Window (Peak {T_BEFORE} to {T_AFTER})")
+        axes[0].legend()
+        axes[0].grid(True, alpha=0.3)
+
+        # Plot Acceleration
+        axes[1].plot(steps_100, acc_100[:, PUSH_AXIS_IDX], 'r-', alpha=0.3, label='Context (100)')
+        axes[1].plot(steps_20, acc_20[:, PUSH_AXIS_IDX], 'r-', linewidth=3, label='Model Input (20)')
+        
+        # Mark the negative peak location relative to this plot
+        peak_local = t_peak - ctx_start_abs
+        if 0 <= peak_local < len(vel_100):
+            axes[1].axvline(peak_local, color='k', linestyle='--', alpha=0.5, label='Impact Peak (Min)')
+
+        axes[1].set_title(f"Acceleration: Min Peak at {peak_local}")
+        axes[1].legend()
+        axes[1].grid(True, alpha=0.3)
+
+        plt.tight_layout()
+        # --- NEW: Shift plots down slightly so they don't overlap with the suptitle ---
+        fig.subplots_adjust(top=0.90)
+
+        # Formatted filename to 3 decimal places to keep files neat
+        filename = f"infe_mest_{mass_est:.3f}_muest_{mu_est:.3f}_w{SMOOTHING_WINDOW}.png"
+        plt.savefig(os.path.join(cwd, "vis", filename))
+        plt.close()
+
+
 # ==========================================
 # 4. MAIN LOOP
 # ==========================================
