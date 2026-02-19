@@ -23,10 +23,10 @@ V_DESIRED_BASE = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0])
 PUSH_AXIS_IDX = 1  # 0=X, 1=Y, 2=Z (Must match non-zero element in V_DESIRED)
 
 # Duration parameters
-VELOCITY_DURATION = 5.0 
+VELOCITY_DURATION = 3.0 
 DT = 0.01  # Fixed time step (1/100 Hz)
 
-SMOOTHING_WINDOW = 10
+SMOOTHING_WINDOW = 5
 MODEL_PATH = 'trained_models/transformer_epoch500.pth'
 
 # ==========================================
@@ -183,15 +183,6 @@ def process_and_inference(model, history_vel, history_acc, device):
 
     # --- SAVE CSV (100 Steps) ---
     cwd = ensure_dirs()
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
-    csv_path = os.path.join(cwd, "csv_data", f"inference_context_{timestamp}.csv")
-    
-    # with open(csv_path, mode='w', newline='') as f:
-    #     writer = csv.writer(f)
-    #     writer.writerow(['step_local', 'v_y', 'a_y', 'is_inference_region'])
-    #     for i in range(len(vel_100)):
-    #         is_inf = 1 if (i >= viz_inf_start and i < viz_inf_end) else 0
-    #         writer.writerow([i, vel_100[i, PUSH_AXIS_IDX], acc_100[i, PUSH_AXIS_IDX], is_inf])
     
     # --- INFERENCE ---
     if model is not None:
@@ -254,6 +245,15 @@ def process_and_inference(model, history_vel, history_acc, device):
         plt.savefig(os.path.join(cwd, "vis", filename))
         plt.close()
 
+        csv_path = os.path.join(cwd, "csv_data", f"infe_mest_{mass_est:.3f}_muest_{mu_est:.3f}_w{SMOOTHING_WINDOW}.csv")
+        with open(csv_path, mode='w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['step_local', 'v_y', 'a_y', 'is_inference_region'])
+            for i in range(len(vel_100)):
+                is_inf = 1 if (i >= viz_inf_start and i < viz_inf_end) else 0
+                writer.writerow([i, vel_100[i, PUSH_AXIS_IDX], acc_100[i, PUSH_AXIS_IDX], is_inf])
+    
+
 
 # ==========================================
 # 4. MAIN LOOP
@@ -299,7 +299,7 @@ def run_push_and_velocity():
         panda.start_controller(ctrl)
         model_robot = panda.get_model()
         
-        with panda.create_context(frequency=100.0) as ctx:
+        with panda.create_context(frequency=1/DT) as ctx:
             start_time = time.time()
             
             while ctx.ok():
