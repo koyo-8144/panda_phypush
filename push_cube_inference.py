@@ -27,10 +27,10 @@ DT = 0.01  # Fixed time step (1/100 Hz)
 
 # The specific joint configuration (radians)
 PUSHSET_Q = np.array([
-    1.72169, -1.02605, -2.27493, -2.10522, 0.503725, 1.85432, -1.62299
+    1.81007,-1.06737,-2.4372,-2.03236,0.449045,1.7917,-1.76067
 ])
 
-SMOOTHING_WINDOW = 5 
+SMOOTHING_WINDOW = 7
 MODEL_PATH = 'trained_models/transformer_epoch500.pth'
 
 # ==========================================

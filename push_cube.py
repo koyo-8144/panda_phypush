@@ -22,7 +22,13 @@ DT = 0.01  # Fixed time step (1/100 Hz)
 
 # The specific joint configuration (radians)
 PUSHSET_Q = np.array([
-    1.72169, -1.02605, -2.27493, -2.10522, 0.503725, 1.85432, -1.62299
+    1.75714665,
+    -1.08043168, 
+    -2.39465545, 
+    -2.05762684,  
+    0.50821188,  
+    1.82329159,
+    -1.7067362
 ])
 
 SMOOTHING_WINDOW = 5 
