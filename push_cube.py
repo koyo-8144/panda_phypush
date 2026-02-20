@@ -173,6 +173,9 @@ def run_push_and_velocity():
                 lin_acc_local = R_start_T @ acc_w[:3]
                 ang_acc_local = R_start_T @ acc_w[3:]
                 acc_local = np.concatenate([lin_acc_local, ang_acc_local])
+
+                vel_local = vel_w_smoothed
+                acc_local = acc_w
                 
                 history_vel.append(vel_local)
                 history_acc.append(acc_local)

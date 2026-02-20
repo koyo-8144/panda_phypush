@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 import panda_py
 from panda_py import libfranka, controllers
+from pathlib import Path
 from const import PUSHSET_POSE, PUSHSET_Q
 
 # ==========================================
@@ -27,7 +28,20 @@ VELOCITY_DURATION = 3.0
 DT = 0.01  # Fixed time step (1/100 Hz)
 
 SMOOTHING_WINDOW = 5
-MODEL_PATH = 'trained_models/transformer_epoch500.pth'
+
+# 1. Define the shared base directories
+base_path = Path("/home/psxkf4/offline_training_phypush/deployed_models/deployed_models")
+# 2. Extract the incredibly long experiment folder name as a variable
+exp_folder = "velema0.3std0.0005_b64_lroptAdamW_lrscheReduceLROnPlateau_msharp30.0_musharp10.0_dropout0.4_numepo500_transver4_mseenmax1.0_mseenmin0.3"
+exp_path = base_path / exp_folder
+# 3. Store both models distinctly so they don't overwrite each other
+HYBRID_MODEL_PATH = exp_path / "hybrid_tcri-log1p_mse_task10.0_pcri-mse_p5c5.0.pth"
+# PINN_MODEL_PATH = exp_path / "pinn_pcri-mse_p5c10.0.pth"
+PINN_MODEL_PATH = exp_path / "pinn_pcri-mse_p10c10.0.pth"
+DATA_MODEL_PATH = exp_path /"data_tcri-log1p_mse_task10.0.pth"
+# 4. Explicitly assign the one you want to actively use
+MODEL_PATH = PINN_MODEL_PATH 
+
 
 # ==========================================
 # 2. TRANSFORMER MODEL ARCHITECTURE
@@ -46,7 +60,7 @@ class PositionalEncoding(nn.Module):
         return x + self.pe[:, :x.size(1), :]
 
 class PhysicsTransformerEstimator(nn.Module):
-    def __init__(self, input_dim=2, d_model=32, nhead=4, num_encoder_layers=2, seq_len=20, dropout=0.4, version=4):
+    def __init__(self, input_dim=1, d_model=32, nhead=4, num_encoder_layers=2, seq_len=20, dropout=0.4, version=4):
         super().__init__()
         self.version = version
         self.input_proj = nn.Linear(input_dim, d_model)
@@ -72,8 +86,8 @@ class PhysicsTransformerEstimator(nn.Module):
         self.fric_attn = nn.MultiheadAttention(d_model, 1, batch_first=True)
         self.mu_pred_mlp = nn.Sequential(nn.Linear(d_model, 64), nn.ReLU(), nn.Linear(64, 1), nn.Softplus())
 
-    def forward(self, x_acc, x_vel):
-        x = torch.cat([x_vel, x_acc], dim=-1) 
+    def forward(self, x_vel):
+        x = x_vel
         z = self.input_proj(x)
         z = self.pos_encoder(z)
         h_enc = self.transformer_encoder(z)
@@ -102,7 +116,7 @@ def ensure_dirs():
     return cwd
 
 def load_model(device):
-    model = PhysicsTransformerEstimator(input_dim=2, d_model=32, seq_len=20, version=4)
+    model = PhysicsTransformerEstimator(input_dim=1, d_model=32, seq_len=20, version=4)
     if os.path.exists(MODEL_PATH):
         try:
             # Map to CPU to avoid CUDA version errors
@@ -122,13 +136,14 @@ def process_and_inference(model, history_vel, history_acc, device):
     Updates:
     1. Finds the minimum acceleration (negative peak / maximum deceleration).
     2. Extracts Inference Window:
-       - Start: t_peak - 2
-       - End:   t_peak + 18 (Adjusted to ensure exactly 20 steps)
+       - Start: t_peak - 3
+       - End:   t_peak + 17 (Adjusted to ensure exactly 20 steps)
     3. Extracts a broader 100-step context for visualization/debugging.
     """
+
     # --- Configuration ---
-    T_BEFORE = -2
-    T_AFTER = 18 
+    T_BEFORE = -3
+    T_AFTER = 17 
     WINDOW_LEN = T_AFTER - T_BEFORE  # Exactly 20 steps
 
     if len(history_vel) < 100:
@@ -192,10 +207,10 @@ def process_and_inference(model, history_vel, history_acc, device):
 
         # Reshape to [Batch=1, Seq=20, Dim=1]
         t_vel = torch.from_numpy(vel_20[:, PUSH_AXIS_IDX]).float().view(1, 20, 1).to(device)
-        t_acc = torch.from_numpy(acc_20[:, PUSH_AXIS_IDX]).float().view(1, 20, 1).to(device)
+        # t_acc = torch.from_numpy(acc_20[:, PUSH_AXIS_IDX]).float().view(1, 20, 1).to(device)
 
         with torch.no_grad():
-            output = model(t_acc, t_vel)
+            output = model(t_vel)
             mass_est = output[0, 0].item()
             mu_est = output[0, 1].item()
         
@@ -245,7 +260,7 @@ def process_and_inference(model, history_vel, history_acc, device):
         plt.savefig(os.path.join(cwd, "vis", filename))
         plt.close()
 
-        csv_path = os.path.join(cwd, "csv_data", f"infe_mest_{mass_est:.3f}_muest_{mu_est:.3f}_w{SMOOTHING_WINDOW}.csv")
+        csv_path = os.path.join(cwd, "csv_data", "", f"infe_mest_{mass_est:.3f}_muest_{mu_est:.3f}_w{SMOOTHING_WINDOW}.csv")
         with open(csv_path, mode='w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(['step_local', 'v_y', 'a_y', 'is_inference_region'])
@@ -284,9 +299,9 @@ def run_push_and_velocity():
         print("Moving to Neutral...")
         panda.move_to_start()
         
-        print("Closing Gripper...")
-        gripper.grasp(0, 0.2, 10, 0.04, 0.04)
-        time.sleep(1.0)
+        # print("Closing Gripper...")
+        # gripper.grasp(0, 0.2, 10, 0.04, 0.04)
+        # time.sleep(1.0)
         
         print(f"Moving to Pushset Pose...")
         panda.move_to_joint_position(PUSHSET_Q, speed_factor=0.2)
