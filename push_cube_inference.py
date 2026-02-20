@@ -299,9 +299,9 @@ def run_push_and_velocity():
         print("Moving to Neutral...")
         panda.move_to_start()
         
-        print("Closing Gripper...")
-        gripper.grasp(0, 0.2, 10, 0.04, 0.04)
-        time.sleep(1.0)
+        # print("Closing Gripper...")
+        # gripper.grasp(0, 0.2, 10, 0.04, 0.04)
+        # time.sleep(1.0)
         
         print(f"Moving to Pushset Pose...")
         panda.move_to_joint_position(PUSHSET_Q, speed_factor=0.2)
