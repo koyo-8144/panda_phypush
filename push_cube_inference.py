@@ -268,7 +268,14 @@ def load_model(device):
 #                 is_inf = 1 if (i >= viz_inf_start and i < viz_inf_end) else 0
 #                 writer.writerow([i, vel_100[i, PUSH_AXIS_IDX], acc_100[i, PUSH_AXIS_IDX], is_inf])
 
-def process_and_inference(model, history_vel, history_acc, device):
+import os
+import csv
+import time
+import numpy as np
+import matplotlib.pyplot as plt
+import torch
+
+def process_and_inference(model, history_vel, history_acc, device, save_dir="."):
     """
     Updates:
     1. Finds the minimum acceleration (negative peak / maximum deceleration).
@@ -278,6 +285,7 @@ def process_and_inference(model, history_vel, history_acc, device):
        - Len:   Exactly 60 steps
     3. Extracts a 100-step context for visualization, centering the 60 steps inside it.
     4. Saves CSV and plots with a unique timestamp in the filename.
+    5. NEW: Allows specifying the base save directory via `save_dir`.
     """
 
     # --- Configuration ---
@@ -360,8 +368,16 @@ def process_and_inference(model, history_vel, history_acc, device):
     # else:
     #     print("Model not provided. Skipping inference, proceeding to save data.")
 
+    # --- PREPARE DIRECTORIES ---
+    # Create specific subfolders for this experiment parameters
+    experiment_folder = "mgt_0.65_60"
+    
+    vis_dir = os.path.join(save_dir, "vis", experiment_folder)
+    csv_dir = os.path.join(save_dir, "csv_data", experiment_folder)
+    os.makedirs(vis_dir, exist_ok=True)
+    os.makedirs(csv_dir, exist_ok=True)
+
     # --- PLOT ---
-    cwd = ensure_dirs()
     timestamp = time.strftime("%Y%m%d-%H%M%S") # Generate unique timestamp
     
     fig, axes = plt.subplots(2, 1, figsize=(10, 8))
@@ -396,14 +412,16 @@ def process_and_inference(model, history_vel, history_acc, device):
     fig.subplots_adjust(top=0.90)
 
     # Formatted filename using timestamp
-    base_filename = f"ext_{WINDOW_LEN}steps_{timestamp}_mest_{mass_est:.3f}_muest_{mu_est:.3f}_w{SMOOTHING_WINDOW}"
+    base_filename = f"ext_{WINDOW_LEN}steps_{timestamp}_w{SMOOTHING_WINDOW}"
     
-    plot_path = os.path.join(cwd, "vis", f"{base_filename}.png")
+    # Save Plot to the specified directory
+    plot_path = os.path.join(vis_dir, f"{base_filename}.png")
     plt.savefig(plot_path)
     plt.close()
 
     # --- SAVE CSV ---
-    csv_path = os.path.join(cwd, "csv_data", f"{base_filename}.csv")
+    # Save CSV to the specified directory
+    csv_path = os.path.join(csv_dir, f"{base_filename}.csv")
     with open(csv_path, mode='w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['step_local', 'v_y', 'a_y', 'is_inference_region'])
