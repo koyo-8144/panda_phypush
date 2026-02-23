@@ -134,14 +134,24 @@ def process_and_inference(model, history_vel, history_acc, device, version_tag, 
 
     # 1. Find Negative Peak Acceleration Index (Impact Deceleration)
     acc_push_axis = np_acc_full[:, PUSH_AXIS_IDX]
+    vel_push_axis = np_vel_full[:, PUSH_AXIS_IDX]
     
     skip_start = 100
     skip_end = 100
     
     # Check if we actually have enough data to skip 200 steps
     if total_steps > (skip_start + skip_end):
-        search_window = acc_push_axis[skip_start : -skip_end]
-        t_peak = int(np.argmin(search_window)) + skip_start
+        search_window_vel = vel_push_axis[skip_start : -skip_end]
+        t_peak_vel = int(np.argmin(search_window_vel)) + skip_start
+
+        search_window_acc = acc_push_axis[skip_start : -skip_end]
+        t_peak_acc = int(np.argmin(search_window_acc)) + skip_start
+
+        t_peak_diff = abs(t_peak_acc - t_peak_vel)
+        T_BEFORE-=t_peak_diff
+        t_peak = t_peak_vel
+        print("t_peak_acc: ", t_peak_acc)
+        print("t_peak_vel: ", t_peak_vel)
     else:
         print(f"⚠️ Sequence too short ({total_steps} steps) to exclude 100 from both ends. Searching full sequence.")
         t_peak = int(np.argmin(acc_push_axis))
