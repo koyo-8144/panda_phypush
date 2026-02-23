@@ -37,8 +37,10 @@ exp_folder_v1 = "velema1.0std0.0005_realCalibRubW5_b64_lroptAdamW_lrscheReduceLR
 exp_folder_v2 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.2_dmodel64_ms20.0_fs1.0_nenc4_numepo1000_transver4_mseenmax1.0_mseenmin0.3"
 exp_folder_v3 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.2_dmodel64_ms1.0_fs1.0_nenc4_numepo1000_transver4_mseenmax1.0_mseenmin0.3"
 exp_folder_v4 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.4_dmodel64_ms1.0_fs1.0_nenc4_numepo500_transver4_mseenmax1.0_mseenmin0.3"
+exp_folder_v5 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.4_dmodel64_ms1.0_fs10.0_nenc4_numepo1000_transver4_mseenmax1.0_mseenmin0.3"
+exp_folder_v6 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.4_dmodel64_ms1.0_fs1.0_nenc4_numepo1000_transver4_mseenmax1.0_mseenmin0.3"
 
-exp_path = base_path / exp_folder_v4
+exp_path = base_path / exp_folder_v6
 
 # 3. Create a Registry mapping Version Tags to their specific Model Paths
 MODEL_REGISTRY = {
@@ -49,14 +51,15 @@ MODEL_REGISTRY = {
     "v3_pinn":   exp_path / "pinn_pcri-L1_p5c10.0 [Drop0.4_Epo500].pth",
     "v4_pinn":   exp_path / "pinn_pcri-L1_p10c10.0 [Drop0.4_Epo500].pth",
     "v5_pinn":   exp_path / "pinn_annstartepo300_pcri-L1_p10c10.0_p9-2c5.0 [Drop0.4_Epo500].pth",
+    "v6_pinn":   exp_path / "pinn_pcri-L1_p10c10.0 [FS10_Drop0.4_Epo1000].pth",
 
-    "v1_data":   exp_path / "data_tcri-log1p_mse_task10.0.pth",
+    "v1_data":   exp_path / "data_tcri-log1p_mse_task10.0 [Drop0.4_Epo1000].pth",
 }
 
 
-SMOOTHING_WINDOW = 3
-VERSION_TAG = "v5_pinn"  
-M_GT = 0.95
+SMOOTHING_WINDOW = 7
+VERSION_TAG = "v1_data"  
+M_GT = 0.39
 MU_GT = None
 EXPERIMENT_FOLDER = f"mgt{M_GT}_w{SMOOTHING_WINDOW}"
 OBJECT = "nolid_cube"
