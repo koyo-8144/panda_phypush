@@ -19,12 +19,12 @@ from const import PUSHSET_POSE, PUSHSET_Q, HOSTNAME
 username = 'cobotmakerspace'
 password = 'cobotmakerspace'
 
-# COMMAND: Move 8 cm/s along Base Y-Axis (Index 1)
-V_DESIRED_BASE = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0]) 
+V_DESIRED_BASE_SET = np.array([0.0, 0.1, 0.0, 0.0, 0.0, 0.0]) 
+V_DESIRED_BASE_PUSH = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0]) # Move 8 cm/s 
 PUSH_AXIS_IDX = 1  # 0=X, 1=Y, 2=Z (Must match non-zero element in V_DESIRED)
 
 # Duration parameters
-SET_VELOCITY_DURATION = 4.0 
+SET_VELOCITY_DURATION = 3.0 
 PUSH_VELOCITY_DURATION = 7.0 
 DT = 0.01  # Fixed time step (1/100 Hz)
 
@@ -56,7 +56,8 @@ MODEL_REGISTRY = {
 
 SMOOTHING_WINDOW = 5
 VERSION_TAG = "v5_pinn"  
-MGT = 0.76
+MGT = 0.32
+MU_GT = None
 EXPERIMENT_FOLDER = f"mgt{MGT}_w{SMOOTHING_WINDOW}"
 OBJECT = "nolid_cube"
 SURFACE = "green_rub"
@@ -297,9 +298,51 @@ def process_and_inference(model, history_vel, history_acc, device, version_tag, 
             is_inf = 1 if (i >= csv_inf_start and i < csv_inf_end) else 0
             writer.writerow([i, vel_100[i, PUSH_AXIS_IDX], acc_100[i, PUSH_AXIS_IDX], is_inf])
     
+    # ==========================================
+    # --- SAVE METADATA CSV ---
+    # ==========================================
+    # Ordered to match the directory structure: 
+    # Purpose -> Condition -> Experiment Folder -> Version Tag
+    metadata = {
+        # --- Hierarchy Level 1 ---
+        "PURPOSE": purpose,
+        "DATA_COLLECTION": DATA_COLLECTION,
+        
+        # --- Hierarchy Level 2 ---
+        "CONDITION": condition,
+        "OBJECT": OBJECT,
+        "SURFACE": SURFACE,
+        
+        # --- Hierarchy Level 3 ---
+        "EXPERIMENT_FOLDER": experiment_folder,
+        "MGT": MGT,
+        "MU_GT": MU_GT,
+        "SMOOTHING_WINDOW": SMOOTHING_WINDOW,
+        
+        # --- Hierarchy Level 4 ---
+        "VERSION_TAG": version_tag,
+        
+        # --- Execution Details & Results ---
+        "TIMESTAMP": timestamp,
+        "PRED_MASS_KG": mass_est,
+        "PRED_MU": mu_est,
+        "WINDOW_LEN": WINDOW_LEN,
+        "GLOBAL_IMPACT_STEP": t_peak
+    }
+
+    metadata_csv_path = os.path.join(csv_dir, f"{base_filename}_metadata.csv")
+    
+    with open(metadata_csv_path, mode='w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Parameter", "Value"])  # Header
+        for key, value in metadata.items():
+            writer.writerow([key, value])
+            
+
     print(f"Full Plot saved to {plot_path_full}")
     print(f"Input Vel Plot saved to {plot_path_vel}")
     print(f"Data saved to {csv_path}")
+    print(f"Metadata saved to {metadata_csv_path}")
 
 # ==========================================
 # MAIN LOOP
@@ -329,9 +372,6 @@ def run_push_and_velocity():
         panda.move_to_joint_position(PUSHSET_Q, speed_factor=0.2)
         time.sleep(2.0)
         
-        # --- Velocity Control ---
-        print(f"Starting Base Velocity Control: {V_DESIRED_BASE}")
-        
         # START the Velocity Controller for the first motion
         ctrl = controllers.IntegratedVelocity()
         panda.start_controller(ctrl)
@@ -350,12 +390,12 @@ def run_push_and_velocity():
                 J_pinv = np.linalg.pinv(J)
                 
                 # Command
-                dq_cmd = J_pinv @ V_DESIRED_BASE
+                dq_cmd = J_pinv @ V_DESIRED_BASE_SET
                 ctrl.set_control(dq_cmd)
                 
         # ---> FIX: STOP the controller before doing a joint motion! <---
         panda.stop_controller()
-        time.sleep(2.0)
+        time.sleep(3.0)
 
         # 2. Now it is safe to use built-in joint position commands
         print(f"Moving to Pushset Pose...")
@@ -378,7 +418,7 @@ def run_push_and_velocity():
                 J_pinv = np.linalg.pinv(J)
                 
                 # Command
-                dq_cmd = J_pinv @ V_DESIRED_BASE
+                dq_cmd = J_pinv @ V_DESIRED_BASE_PUSH
                 ctrl.set_control(dq_cmd)
                 
                 # Record
