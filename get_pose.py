@@ -4,9 +4,9 @@ import numpy as np
 import panda_py
 from panda_py import libfranka, constants
 from matplotlib import pyplot as plt
+from const import HOSTNAME
 
 # 1. Configuration
-hostname = '172.22.2.3'
 username = 'cobotmakerspace'
 password = 'cobotmakerspace'
 
@@ -18,14 +18,14 @@ def run_panda_test():
         # 2. Desk Connection (Code Block 1)
         # Unlock brakes and activate FCI for control
         print("\n--- Connecting to Desk ---")
-        desk = panda_py.Desk(hostname, username, password)
+        desk = panda_py.Desk(HOSTNAME, username, password)
         # desk.unlock()
         # desk.activate_fci()
 
         # 3. Robot and Gripper Initialization (Code Block 2)
         print("\n--- Initializing Robot and Gripper ---")
-        panda = panda_py.Panda(hostname)
-        gripper = libfranka.Gripper(hostname)
+        panda = panda_py.Panda(HOSTNAME)
+        gripper = libfranka.Gripper(HOSTNAME)
 
 
         pose = panda.get_pose()

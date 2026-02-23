@@ -1,5 +1,8 @@
 import numpy as np
 
+hostname_vincent = '172.22.2.3'
+hostname_bob = '172.22.2.4'
+
 
 INTER_Q = np.array([
     2.2647625646576617, 
@@ -68,3 +71,5 @@ PUSHSET_Q = PUSHSET_Q_FAR
 
 PUSHSET_POSE = PUSHSET_POSE_V1
 USE_IK = 0
+
+HOSTNAME = hostname_bob

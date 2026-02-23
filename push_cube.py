@@ -6,10 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import panda_py
 from panda_py import libfranka, controllers
-from const import PUSHSET_POSE, PUSHSET_Q
+from const import PUSHSET_POSE, PUSHSET_Q, HOSTNAME
 
 # --- 1. Configuration ---
-hostname = '172.22.2.3'
 username = 'cobotmakerspace'
 password = 'cobotmakerspace'
 
@@ -93,9 +92,9 @@ def run_push_and_velocity():
 
     try:
         # --- Connect ---
-        print(f"Connecting to {hostname}...")
-        panda = panda_py.Panda(hostname)
-        gripper = libfranka.Gripper(hostname)
+        print(f"Connecting to {HOSTNAME}...")
+        panda = panda_py.Panda(HOSTNAME)
+        gripper = libfranka.Gripper(HOSTNAME)
         
         # --- Init ---
         print("Moving to Neutral...")

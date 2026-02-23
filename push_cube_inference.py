@@ -11,13 +11,11 @@ import panda_py
 from panda_py import libfranka, controllers
 from pathlib import Path
 from phypush_transformer import PhysicsTransformerEstimator
-from const import PUSHSET_POSE, PUSHSET_Q
+from const import PUSHSET_POSE, PUSHSET_Q, HOSTNAME
 
 # ==========================================
 # 1. CONFIGURATION
 # ==========================================
-# hostname = '172.22.2.3'
-hostname = '172.22.2.4'
 username = 'cobotmakerspace'
 password = 'cobotmakerspace'
 
@@ -26,10 +24,10 @@ V_DESIRED_BASE = np.array([0.0, 0.08, 0.0, 0.0, 0.0, 0.0])
 PUSH_AXIS_IDX = 1  # 0=X, 1=Y, 2=Z (Must match non-zero element in V_DESIRED)
 
 # Duration parameters
-VELOCITY_DURATION = 7.0 
+SET_VELOCITY_DURATION = 4.0 
+PUSH_VELOCITY_DURATION = 7.0 
 DT = 0.01  # Fixed time step (1/100 Hz)
 
-SMOOTHING_WINDOW = 7
 
 # 1. Define the shared base directories
 base_path = Path("/home/psxkf4/offline_training_phypush/deployed_models")
@@ -55,8 +53,15 @@ MODEL_REGISTRY = {
     "v1_data":   exp_path / "data_tcri-log1p_mse_task10.0.pth",
 }
 
-# 4. Explicitly assign the Version Tag you want to actively use
-VERSION_TAG = "v3_pinn"  
+
+SMOOTHING_WINDOW = 5
+VERSION_TAG = "v5_pinn"  
+MGT = 0.76
+EXPERIMENT_FOLDER = f"mgt{MGT}_w{SMOOTHING_WINDOW}"
+OBJECT = "nolid_cube"
+SURFACE = "green_rub"
+DATA_COLLECTION = 0
+
 
 # Automatically grab the correct path based on the tag
 if VERSION_TAG not in MODEL_REGISTRY:
@@ -66,8 +71,6 @@ MODEL_PATH = MODEL_REGISTRY[VERSION_TAG]
 print(f"Loaded Target: {VERSION_TAG} -> {MODEL_PATH.name}")
 
 
-EXPERIMENT_FOLDER = f"mgt_0.57_60_rub_w{SMOOTHING_WINDOW}"
-DATA_COLLECTION = 0
 
 
 # ==========================================
@@ -220,23 +223,19 @@ def process_and_inference(model, history_vel, history_acc, device, version_tag, 
 
     # --- PREPARE DIRECTORIES ---
     experiment_folder = EXPERIMENT_FOLDER
+    condition = f"{OBJECT}_{SURFACE}"
     if DATA_COLLECTION:
-        category = "data_collection"
+        purpose = "data_collection"
     else:
-        category = "inference"
+        purpose = "inference"
     
-    vis_dir = os.path.join(save_dir, "vis", category, experiment_folder)
-    csv_dir = os.path.join(save_dir, "csv_data", category, experiment_folder)
+    vis_dir = os.path.join(save_dir, "vis", purpose, condition, experiment_folder, version_tag)
+    csv_dir = os.path.join(save_dir, "csv_data", purpose, condition, experiment_folder, version_tag)
     os.makedirs(vis_dir, exist_ok=True)
     os.makedirs(csv_dir, exist_ok=True)
 
     timestamp = time.strftime("%Y%m%d-%H%M%S") 
-    
-    # ---> NEW: Embedded `version_tag` into the filenames <---
-    if DATA_COLLECTION:
-        base_filename = f"ext_{WINDOW_LEN}steps_{timestamp}_w{SMOOTHING_WINDOW}_{version_tag}"
-    else:
-        base_filename = f"ext_{WINDOW_LEN}steps_mest{mass_est:.3f}_muest{mu_est:.3f}_w{SMOOTHING_WINDOW}_{version_tag}"
+    base_filename = f"ext_mest{mass_est:.3f}_muest{mu_est:.3f}"
 
     # ==========================================
     # --- PLOT 1: FULL SEQUENCE OVERVIEW ---
@@ -322,9 +321,9 @@ def run_push_and_velocity():
     prev_vel_w = np.zeros(6)
 
     try:
-        print(f"Connecting to {hostname}...")
-        panda = panda_py.Panda(hostname)
-        gripper = libfranka.Gripper(hostname)
+        print(f"Connecting to {HOSTNAME}...")
+        panda = panda_py.Panda(HOSTNAME)
+        gripper = libfranka.Gripper(HOSTNAME)
         
         print(f"Moving to Pushset Pose...")
         panda.move_to_joint_position(PUSHSET_Q, speed_factor=0.2)
@@ -333,15 +332,44 @@ def run_push_and_velocity():
         # --- Velocity Control ---
         print(f"Starting Base Velocity Control: {V_DESIRED_BASE}")
         
+        # START the Velocity Controller for the first motion
         ctrl = controllers.IntegratedVelocity()
         panda.start_controller(ctrl)
         model_robot = panda.get_model()
-        
-        with panda.create_context(frequency=1/DT) as ctx:
-            start_time = time.time()
+
+        with panda.create_context(frequency=1/DT) as ctx_set:
+            start_time_set = time.time()
             
-            while ctx.ok():
-                if time.time() - start_time > VELOCITY_DURATION:
+            while ctx_set.ok():
+                if time.time() - start_time_set > SET_VELOCITY_DURATION:
+                    break
+                
+                state = panda.get_state()
+                J_flat = model_robot.zero_jacobian(libfranka.Frame.kEndEffector, state)
+                J = np.array(J_flat).reshape((6, 7), order='F')
+                J_pinv = np.linalg.pinv(J)
+                
+                # Command
+                dq_cmd = J_pinv @ V_DESIRED_BASE
+                ctrl.set_control(dq_cmd)
+                
+        # ---> FIX: STOP the controller before doing a joint motion! <---
+        panda.stop_controller()
+        time.sleep(2.0)
+
+        # 2. Now it is safe to use built-in joint position commands
+        print(f"Moving to Pushset Pose...")
+        panda.move_to_joint_position(PUSHSET_Q, speed_factor=0.2)
+        time.sleep(0.5)
+        
+        # ---> RESTART the velocity controller for the push! <---
+        panda.start_controller(ctrl)
+        
+        with panda.create_context(frequency=1/DT) as ctx_push:
+            start_time_push = time.time()
+            
+            while ctx_push.ok():
+                if time.time() - start_time_push > PUSH_VELOCITY_DURATION:
                     break
                 
                 state = panda.get_state()
@@ -369,11 +397,10 @@ def run_push_and_velocity():
                 
                 history_vel.append(vel_w_smoothed)
                 history_acc.append(acc_w)
-
-        print("Motion finished.")
+                
+        # Final cleanup
         panda.stop_controller()
         
-        # ---> NEW: Passed `VERSION_TAG` into processing <---
         process_and_inference(model, history_vel, history_acc, device, VERSION_TAG)
 
     except Exception as e:
