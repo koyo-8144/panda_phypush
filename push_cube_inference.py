@@ -10,6 +10,7 @@ import torch.nn as nn
 import panda_py
 from panda_py import libfranka, controllers
 from pathlib import Path
+from phypush_transformer import PhysicsTransformerEstimator
 from const import PUSHSET_POSE, PUSHSET_Q
 
 # ==========================================
@@ -28,91 +29,49 @@ PUSH_AXIS_IDX = 1  # 0=X, 1=Y, 2=Z (Must match non-zero element in V_DESIRED)
 VELOCITY_DURATION = 7.0 
 DT = 0.01  # Fixed time step (1/100 Hz)
 
-SMOOTHING_WINDOW = 10
+SMOOTHING_WINDOW = 7
 
 # 1. Define the shared base directories
 base_path = Path("/home/psxkf4/offline_training_phypush/deployed_models")
+
 # 2. Extract the incredibly long experiment folder name as a variable
-exp_folder = "velema1.0std0.0005_realCalibRubW5_b64_lroptAdamW_lrscheReduceLROnPlateau_msharp30.0_musharp10.0_dropout0.4_numepo500_transver4_mseenmax1.0_mseenmin0.3"
-exp_path = base_path / exp_folder
-# 3. Store both models distinctly so they don't overwrite each other
-HYBRID_MODEL_PATH = exp_path / "hybrid_tcri-log1p_mse_task10.0_pcri-mse_p5c5.0.pth"
-PINN_MODEL_PATH = exp_path / "pinn_pcri-mse_p5c10.0.pth"
-# PINN_MODEL_PATH = exp_path / "pinn_pcri-mse_p10c10.0.pth"
-DATA_MODEL_PATH = exp_path /"data_tcri-log1p_mse_task10.0.pth"
-# 4. Explicitly assign the one you want to actively use
-MODEL_PATH = PINN_MODEL_PATH
+exp_folder_v1 = "velema1.0std0.0005_realCalibRubW5_b64_lroptAdamW_lrscheReduceLROnPlateau_msharp30.0_musharp10.0_dropout0.4_numepo500_transver4_mseenmax1.0_mseenmin0.3"
+exp_folder_v2 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.2_dmodel64_ms20.0_fs1.0_nenc4_numepo1000_transver4_mseenmax1.0_mseenmin0.3"
+exp_folder_v3 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.2_dmodel64_ms1.0_fs1.0_nenc4_numepo1000_transver4_mseenmax1.0_mseenmin0.3"
+exp_folder_v4 = "velema1.0_60_aft0.3_vft0.01_b64_lroptAdamW_lrscheOneCycle_msharp5.0_musharp5.0_dropout0.4_dmodel64_ms1.0_fs1.0_nenc4_numepo500_transver4_mseenmax1.0_mseenmin0.3"
+
+exp_path = base_path / exp_folder_v4
+
+# 3. Create a Registry mapping Version Tags to their specific Model Paths
+MODEL_REGISTRY = {
+    "v1_hybrid": exp_path / "hybrid_tcri-log1p_mse_task10.0_pcri-mse_p5c5.0.pth",
+
+    "v1_pinn":   exp_path / "pinn_pcri-mse_p5c10.0.pth",
+    "v2_pinn":   exp_path / "pinn_pcri-mse_p10c10.0.pth",
+    "v3_pinn":   exp_path / "pinn_pcri-L1_p5c10.0 [Drop0.4_Epo500].pth",
+    "v4_pinn":   exp_path / "pinn_pcri-L1_p10c10.0 [Drop0.4_Epo500].pth",
+    "v5_pinn":   exp_path / "pinn_annstartepo300_pcri-L1_p10c10.0_p9-2c5.0 [Drop0.4_Epo500].pth",
+
+    "v1_data":   exp_path / "data_tcri-log1p_mse_task10.0.pth",
+}
+
+# 4. Explicitly assign the Version Tag you want to actively use
+VERSION_TAG = "v3_pinn"  
+
+# Automatically grab the correct path based on the tag
+if VERSION_TAG not in MODEL_REGISTRY:
+    raise ValueError(f"❌ Invalid VERSION_TAG: '{VERSION_TAG}'. Choose from {list(MODEL_REGISTRY.keys())}")
+
+MODEL_PATH = MODEL_REGISTRY[VERSION_TAG]
+print(f"Loaded Target: {VERSION_TAG} -> {MODEL_PATH.name}")
 
 
-EXPERIMENT_FOLDER = f"mgt_0.76_60_rub_w{SMOOTHING_WINDOW}"
-
-
-# ==========================================
-# 2. TRANSFORMER MODEL ARCHITECTURE
-# ==========================================
-class PositionalEncoding(nn.Module):
-    def __init__(self, d_model, max_len=500):
-        super().__init__()
-        pe = torch.zeros(max_len, d_model)
-        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
-        self.register_buffer('pe', pe.unsqueeze(0))
-
-    def forward(self, x):
-        return x + self.pe[:, :x.size(1), :]
-
-class PhysicsTransformerEstimator(nn.Module):
-    def __init__(self, input_dim=1, d_model=32, nhead=4, num_encoder_layers=2, seq_len=60, dropout=0.4, version=4):
-        super().__init__()
-        self.version = version
-        self.input_proj = nn.Linear(input_dim, d_model)
-        self.pos_encoder = PositionalEncoding(d_model, max_len=seq_len + 10)
-        
-        encoder_layer = nn.TransformerEncoderLayer(
-            d_model=d_model, nhead=nhead, dim_feedforward=128, batch_first=True, dropout=dropout
-        )
-        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_encoder_layers)
-
-        self.net_force_mlp = nn.Sequential(nn.Linear(d_model, d_model), nn.ReLU(), nn.Linear(d_model, d_model)) 
-        self.fric_force_mlp = nn.Sequential(nn.Linear(d_model, d_model), nn.ReLU(), nn.Linear(d_model, d_model)) 
-
-        # Missing layers from checkpoint
-        self.phys_net_proj = nn.Linear(d_model, 1)
-        self.phys_fric_proj = nn.Linear(d_model, 1)
-
-        self.q_mass = nn.Parameter(torch.randn(1, 1, d_model) * 2.0)
-        self.mass_attn = nn.MultiheadAttention(d_model, 1, batch_first=True)
-        self.mass_pred_mlp = nn.Sequential(nn.Linear(d_model, 64), nn.ReLU(), nn.Linear(64, 1), nn.Softplus())
-
-        self.q_fric = nn.Parameter(torch.randn(1, 1, d_model) * 2.0)
-        self.fric_attn = nn.MultiheadAttention(d_model, 1, batch_first=True)
-        self.mu_pred_mlp = nn.Sequential(nn.Linear(d_model, 64), nn.ReLU(), nn.Linear(64, 1), nn.Softplus())
-
-    def forward(self, x_vel):
-        x = x_vel
-        z = self.input_proj(x)
-        z = self.pos_encoder(z)
-        h_enc = self.transformer_encoder(z)
-
-        feat_net = self.net_force_mlp(h_enc)
-        feat_fric = self.fric_force_mlp(h_enc)
-
-        q_m = self.q_mass.expand(x.size(0), -1, -1)
-        mass_ctx, _ = self.mass_attn(query=q_m, key=feat_net, value=feat_net)
-        mass_pred = self.mass_pred_mlp(mass_ctx.squeeze(1))
-
-        q_f = self.q_fric.expand(x.size(0), -1, -1)
-        fric_ctx, _ = self.fric_attn(query=q_f, key=feat_fric, value=feat_fric)
-        mu_pred = self.mu_pred_mlp(fric_ctx.squeeze(1))
-
-        return torch.cat([mass_pred, mu_pred], dim=-1)
-
+EXPERIMENT_FOLDER = f"mgt_0.57_60_rub_w{SMOOTHING_WINDOW}"
+DATA_COLLECTION = 0
 
 
 # ==========================================
-# 3. UTILS
+# UTILS
 # ==========================================
 def ensure_dirs():
     cwd = os.getcwd()
@@ -122,13 +81,23 @@ def ensure_dirs():
     return cwd
 
 def load_model(device):
-    model = PhysicsTransformerEstimator(input_dim=1, d_model=32, seq_len=60, dropout=0.0, version=4)
+    model = PhysicsTransformerEstimator(
+        input_dim=1, 
+        d_model=64,             # Updated to match training (was 32)
+        nhead=4, 
+        num_encoder_layers=4,   # Updated to match training (was 2)
+        seq_len=60, 
+        dropout=0.0,            # Force 0 for inference
+        m_sharpness=5.0,        # Updated from training config
+        mu_sharpness=5.0,       # Updated from training config
+        version=4
+    )
     if os.path.exists(MODEL_PATH):
         try:
             # Map to CPU to avoid CUDA version errors
             model.load_state_dict(torch.load(MODEL_PATH, map_location='cpu'))
             model.to(device).eval()
-            print(f"✅ Model loaded: {MODEL_PATH}")
+            print(f"✅ Model loaded successfully: {MODEL_PATH}")
             return model
         except Exception as e:
             print(f"❌ Error loading model: {e}")
@@ -137,8 +106,7 @@ def load_model(device):
         print(f"❌ Model not found at {MODEL_PATH}")
         return None
 
-
-def process_and_inference(model, history_vel, history_acc, device, save_dir="."):
+def process_and_inference(model, history_vel, history_acc, device, version_tag, save_dir="."):
     """
     Updates:
     1. Finds the minimum acceleration (negative peak / maximum deceleration).
@@ -151,9 +119,9 @@ def process_and_inference(model, history_vel, history_acc, device, save_dir=".")
     # --- Configuration ---
     T_BEFORE = -3
     T_AFTER = 57 
-    WINDOW_LEN = T_AFTER - T_BEFORE  # Exactly 60 steps
-    CTX_LEN = 100  # Total context length for the CSV
-    PAD_BEFORE_INF = 20  # Steps to show in CSV before the 60-step window starts
+    WINDOW_LEN = T_AFTER - T_BEFORE  
+    CTX_LEN = 100  
+    PAD_BEFORE_INF = 20  
 
     # Convert full history to numpy arrays [TotalSteps, 6]
     np_vel_full = np.array(history_vel)
@@ -166,15 +134,24 @@ def process_and_inference(model, history_vel, history_acc, device, save_dir=".")
 
     # 1. Find Negative Peak Acceleration Index (Impact Deceleration)
     acc_push_axis = np_acc_full[:, PUSH_AXIS_IDX]
-    t_peak = int(np.argmin(acc_push_axis))
     
+    skip_start = 100
+    skip_end = 100
+    
+    # Check if we actually have enough data to skip 200 steps
+    if total_steps > (skip_start + skip_end):
+        search_window = acc_push_axis[skip_start : -skip_end]
+        t_peak = int(np.argmin(search_window)) + skip_start
+    else:
+        print(f"⚠️ Sequence too short ({total_steps} steps) to exclude 100 from both ends. Searching full sequence.")
+        t_peak = int(np.argmin(acc_push_axis))
+        
     print(f"--- Detected Impact (Negative Peak) at Step {t_peak} ---")
 
     # 2. Define Inference Indices (Absolute)
     inf_start_abs = max(0, t_peak + T_BEFORE)
     inf_end_abs = inf_start_abs + WINDOW_LEN
     
-    # Safety Check: Ensure we don't go out of bounds at the end
     if inf_end_abs > total_steps:
         print(f"⚠️ Peak is too close to end of recording. Shifting window back.")
         shift = inf_end_abs - total_steps
@@ -189,16 +166,13 @@ def process_and_inference(model, history_vel, history_acc, device, save_dir=".")
     ctx_start_abs = max(0, inf_start_abs - PAD_BEFORE_INF)
     ctx_end_abs = ctx_start_abs + CTX_LEN
     
-    # Boundary check for context
     if ctx_end_abs > total_steps:
         ctx_end_abs = total_steps
         ctx_start_abs = max(0, ctx_end_abs - CTX_LEN)
 
-    # Extract 100-step Context Data
     vel_100 = np_vel_full[ctx_start_abs:ctx_end_abs]
     acc_100 = np_acc_full[ctx_start_abs:ctx_end_abs]
 
-    # Calculate local indices for the CSV `is_inference_region` flag
     csv_inf_start = inf_start_abs - ctx_start_abs
     csv_inf_end = inf_end_abs - ctx_start_abs
 
@@ -210,9 +184,7 @@ def process_and_inference(model, history_vel, history_acc, device, save_dir=".")
         if len(vel_60) != WINDOW_LEN:
             print(f"⚠️ Window size mismatch: Got {len(vel_60)}, expected {WINDOW_LEN}. Skipping inference.")
         else:
-            # Reshape to [Batch=1, Seq=60, Dim=1]
             t_vel = torch.from_numpy(vel_60[:, PUSH_AXIS_IDX]).float().view(1, WINDOW_LEN, 1).to(device)
-            # t_acc = torch.from_numpy(acc_60[:, PUSH_AXIS_IDX]).float().view(1, WINDOW_LEN, 1).to(device)
 
             with torch.no_grad():
                 output = model(t_vel)
@@ -230,34 +202,42 @@ def process_and_inference(model, history_vel, history_acc, device, save_dir=".")
 
     # --- PREPARE DIRECTORIES ---
     experiment_folder = EXPERIMENT_FOLDER
+    if DATA_COLLECTION:
+        category = "data_collection"
+    else:
+        category = "inference"
     
-    vis_dir = os.path.join(save_dir, "vis", experiment_folder)
-    csv_dir = os.path.join(save_dir, "csv_data", experiment_folder)
+    vis_dir = os.path.join(save_dir, "vis", category, experiment_folder)
+    csv_dir = os.path.join(save_dir, "csv_data", category, experiment_folder)
     os.makedirs(vis_dir, exist_ok=True)
     os.makedirs(csv_dir, exist_ok=True)
 
-    timestamp = time.strftime("%Y%m%d-%H%M%S") # Generate unique timestamp
-    base_filename = f"ext_{WINDOW_LEN}steps_{timestamp}_w{SMOOTHING_WINDOW}"
+    timestamp = time.strftime("%Y%m%d-%H%M%S") 
+    
+    # ---> NEW: Embedded `version_tag` into the filenames <---
+    if DATA_COLLECTION:
+        base_filename = f"ext_{WINDOW_LEN}steps_{timestamp}_w{SMOOTHING_WINDOW}_{version_tag}"
+    else:
+        base_filename = f"ext_{WINDOW_LEN}steps_mest{mass_est:.3f}_muest{mu_est:.3f}_w{SMOOTHING_WINDOW}_{version_tag}"
 
     # ==========================================
     # --- PLOT 1: FULL SEQUENCE OVERVIEW ---
     # ==========================================
     fig, axes = plt.subplots(2, 1, figsize=(12, 8))
     
-    fig.suptitle(f"Full Sequence ({total_steps} steps) | Extracted: {WINDOW_LEN} | Pred: Mass = {mass_est:.4f} kg, Mu = {mu_est:.4f}", 
+    # Also added the version tag to the plot title for clarity!
+    fig.suptitle(f"[{version_tag.upper()}] Full Sequence ({total_steps} steps) | Extracted: {WINDOW_LEN} | Pred: Mass = {mass_est:.4f} kg, Mu = {mu_est:.4f}", 
                  fontsize=14, fontweight='bold')
 
     steps_full = np.arange(total_steps)
     steps_60 = np.arange(inf_start_abs, inf_end_abs)
 
-    # Plot Velocity
     axes[0].plot(steps_full, np_vel_full[:, PUSH_AXIS_IDX], 'b-', alpha=0.3, label=f'Full Sequence ({total_steps})')
     axes[0].plot(steps_60, vel_60[:, PUSH_AXIS_IDX], 'b-', linewidth=3, label=f'Extracted Window ({WINDOW_LEN})')
     axes[0].set_title(f"Velocity: Highlighted Window (Steps {inf_start_abs} to {inf_end_abs-1})")
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
 
-    # Plot Acceleration
     axes[1].plot(steps_full, np_acc_full[:, PUSH_AXIS_IDX], 'r-', alpha=0.3, label=f'Full Sequence ({total_steps})')
     axes[1].plot(steps_60, acc_60[:, PUSH_AXIS_IDX], 'r-', linewidth=3, label=f'Extracted Window ({WINDOW_LEN})')
     axes[1].axvline(t_peak, color='k', linestyle='--', alpha=0.5, label='Impact Peak (Min)')
@@ -278,7 +258,7 @@ def process_and_inference(model, history_vel, history_acc, device, save_dir=".")
     fig_vel, ax_vel = plt.subplots(figsize=(8, 4))
     
     ax_vel.plot(np.arange(WINDOW_LEN), vel_60[:, PUSH_AXIS_IDX], 'b-o', linewidth=2, markersize=4)
-    ax_vel.set_title(f"Model Input: Extracted Velocity ({WINDOW_LEN} steps)")
+    ax_vel.set_title(f"Model Input: Extracted Velocity ({WINDOW_LEN} steps) [{version_tag}]")
     ax_vel.set_xlabel("Local Time Step")
     ax_vel.set_ylabel(f"Velocity (Axis {PUSH_AXIS_IDX}) [m/s]")
     ax_vel.grid(True, alpha=0.3)
@@ -305,12 +285,11 @@ def process_and_inference(model, history_vel, history_acc, device, save_dir=".")
     print(f"Data saved to {csv_path}")
 
 # ==========================================
-# 4. MAIN LOOP
+# MAIN LOOP
 # ==========================================
 def run_push_and_velocity():
     logging.basicConfig(level=logging.INFO)
     
-    # Check CUDA
     if torch.cuda.is_available():
         device = torch.device('cuda')
     else:
@@ -329,14 +308,6 @@ def run_push_and_velocity():
         panda = panda_py.Panda(hostname)
         gripper = libfranka.Gripper(hostname)
         
-        # # --- Init ---
-        # print("Moving to Neutral...")
-        # panda.move_to_start()
-        
-        # print("Closing Gripper...")
-        # gripper.grasp(0, 0.2, 10, 0.04, 0.04)
-        # time.sleep(1.0)
-        
         print(f"Moving to Pushset Pose...")
         panda.move_to_joint_position(PUSHSET_Q, speed_factor=0.2)
         time.sleep(2.0)
@@ -350,7 +321,6 @@ def run_push_and_velocity():
         
         with panda.create_context(frequency=1/DT) as ctx:
             start_time = time.time()
-            count = 0
             
             while ctx.ok():
                 if time.time() - start_time > VELOCITY_DURATION:
@@ -379,23 +349,14 @@ def run_push_and_velocity():
                 acc_w = (vel_w_smoothed - prev_vel_w) / DT
                 prev_vel_w = vel_w_smoothed.copy()
                 
-                # No rotation needed for Base Frame recording (Base=World)
                 history_vel.append(vel_w_smoothed)
                 history_acc.append(acc_w)
-
-                # count+=1
-                # print("count: ", count)
-
 
         print("Motion finished.")
         panda.stop_controller()
         
-        # print("Cleanup...")
-        # panda.move_to_start()
-        # gripper.move(0.08, 0.2)
-        
-        # --- Processing ---
-        process_and_inference(model, history_vel, history_acc, device)
+        # ---> NEW: Passed `VERSION_TAG` into processing <---
+        process_and_inference(model, history_vel, history_acc, device, VERSION_TAG)
 
     except Exception as e:
         print(f"Error: {e}")
