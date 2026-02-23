@@ -54,15 +54,17 @@ MODEL_REGISTRY = {
 }
 
 
-SMOOTHING_WINDOW = 5
+SMOOTHING_WINDOW = 3
 VERSION_TAG = "v5_pinn"  
-MGT = 0.32
+M_GT = 0.95
 MU_GT = None
-EXPERIMENT_FOLDER = f"mgt{MGT}_w{SMOOTHING_WINDOW}"
+EXPERIMENT_FOLDER = f"mgt{M_GT}_w{SMOOTHING_WINDOW}"
 OBJECT = "nolid_cube"
 SURFACE = "green_rub"
 DATA_COLLECTION = 0
 
+MASS_RANGE = 1.9  # m_unseen_max (2.0) - m_unseen_min (0.1)
+MU_RANGE = 0.4    # mu_unseen_max (0.6) - mu_unseen_min (0.2)
 
 # Automatically grab the correct path based on the tag
 if VERSION_TAG not in MODEL_REGISTRY:
@@ -77,6 +79,32 @@ print(f"Loaded Target: {VERSION_TAG} -> {MODEL_PATH.name}")
 # ==========================================
 # UTILS
 # ==========================================
+def calculate_metrics(gt, est, range_val):
+    """Helper to compute nMAE, NRMSE, and sMAPE."""
+    gt = np.array(gt).flatten()
+    est = np.array(est).flatten()
+    
+    # nMAE (%)
+    mae = np.mean(np.abs(est - gt))
+    nmae_pct = (mae / range_val) * 100 if range_val > 0 else 0
+    
+    # NRMSE (%)
+    rmse = np.sqrt(np.mean((est - gt)**2))
+    nrmse_pct = (rmse / range_val) * 100 if range_val > 0 else 0
+    
+    # sMAPE (%) - Bounded between 0 and 200
+    # Formula: (100 / n) * sum(|est - gt| / ((|gt| + |est|) / 2))
+    denominator = (np.abs(gt) + np.abs(est)) / 2
+    # Avoid division by zero for cases where both gt and est are 0
+    smape_pct = np.mean(np.abs(est - gt) / np.maximum(denominator, 1e-8)) * 100
+    
+    return {
+        "mae": float(mae), 
+        "nmae_pct": float(nmae_pct), 
+        "nrmse_pct": float(nrmse_pct), 
+        "smape_pct": float(smape_pct)
+    }
+
 def ensure_dirs():
     cwd = os.getcwd()
     for folder in ['vis', 'csv_data']:
@@ -198,9 +226,13 @@ def process_and_inference(model, history_vel, history_acc, device, version_tag, 
     csv_inf_start = inf_start_abs - ctx_start_abs
     csv_inf_end = inf_end_abs - ctx_start_abs
 
-    # --- INFERENCE (Optional) ---
+   # --- INFERENCE ---
     mass_est = 0.0
     mu_est = 0.0
+    
+    # ---> FIX: Initialize default metrics here so they always exist! <---
+    mass_metrics = {"mae": "N/A", "nmae_pct": "N/A", "nrmse_pct": "N/A", "smape_pct": "N/A"}
+    mu_metrics = {"mae": "N/A", "nmae_pct": "N/A", "nrmse_pct": "N/A", "smape_pct": "N/A"}
 
     if model is not None:
         if len(vel_60) != WINDOW_LEN:
@@ -213,12 +245,24 @@ def process_and_inference(model, history_vel, history_acc, device, version_tag, 
                 mass_est = output[0, 0].item()
                 mu_est = output[0, 1].item()
             
-            print("\n" + "="*40)
-            print("    PREDICTION RESULTS ")
-            print("="*40)
-            print(f"  MASS: {mass_est:.4f} kg")
-            print(f"  MU:   {mu_est:.4f}")
-            print("="*40 + "\n")
+            # Calculate statistical metrics if GT exists
+            if M_GT is not None:
+                mass_metrics = calculate_metrics(M_GT, mass_est, MASS_RANGE)
+            if MU_GT is not None:
+                mu_metrics = calculate_metrics(MU_GT, mu_est, MU_RANGE)
+            
+            print("\n" + "="*50)
+            print("                🔮 PREDICTION RESULTS 🔮")
+            print("="*50)
+            print(f"  MASS PRED: {mass_est:.4f} kg   |   GT: {M_GT if M_GT else 'N/A'}")
+            if M_GT is not None:
+                print(f"   -> nMAE: {mass_metrics['nmae_pct']:.2f}% | NRMSE: {mass_metrics['nrmse_pct']:.2f}% | sMAPE: {mass_metrics['smape_pct']:.2f}%")
+            
+            print("-" * 50)
+            print(f"  MU PRED:   {mu_est:.4f}      |   GT: {MU_GT if MU_GT else 'N/A'}")
+            if MU_GT is not None:
+                print(f"   -> nMAE: {mu_metrics['nmae_pct']:.2f}% | NRMSE: {mu_metrics['nrmse_pct']:.2f}% | sMAPE: {mu_metrics['smape_pct']:.2f}%")
+            print("="*50 + "\n")
     else:
         print("Model not provided. Skipping inference, proceeding to save data.")
 
@@ -315,19 +359,31 @@ def process_and_inference(model, history_vel, history_acc, device, version_tag, 
         
         # --- Hierarchy Level 3 ---
         "EXPERIMENT_FOLDER": experiment_folder,
-        "MGT": MGT,
-        "MU_GT": MU_GT,
         "SMOOTHING_WINDOW": SMOOTHING_WINDOW,
         
         # --- Hierarchy Level 4 ---
         "VERSION_TAG": version_tag,
         
-        # --- Execution Details & Results ---
+        # --- Execution Details & Predictions ---
         "TIMESTAMP": timestamp,
-        "PRED_MASS_KG": mass_est,
-        "PRED_MU": mu_est,
         "WINDOW_LEN": WINDOW_LEN,
-        "GLOBAL_IMPACT_STEP": t_peak
+        "GLOBAL_IMPACT_STEP": t_peak,
+        "PRED_MASS_KG": mass_est,
+        "MGT": M_GT if M_GT else "N/A",
+        "PRED_MU": mu_est,
+        "MU_GT": MU_GT if MU_GT else "N/A",
+        
+        # --- Mass Metrics ---
+        "MASS_MAE": mass_metrics["mae"],
+        "MASS_NMAE_PCT": mass_metrics["nmae_pct"],
+        "MASS_NRMSE_PCT": mass_metrics["nrmse_pct"],
+        "MASS_SMAPE_PCT": mass_metrics["smape_pct"],
+        
+        # --- Mu Metrics ---
+        "MU_MAE": mu_metrics["mae"],
+        "MU_NMAE_PCT": mu_metrics["nmae_pct"],
+        "MU_NRMSE_PCT": mu_metrics["nrmse_pct"],
+        "MU_SMAPE_PCT": mu_metrics["smape_pct"],
     }
 
     metadata_csv_path = os.path.join(csv_dir, f"{base_filename}_metadata.csv")
