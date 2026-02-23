@@ -139,24 +139,32 @@ def process_and_inference(model, history_vel, history_acc, device, version_tag, 
     skip_start = 100
     skip_end = 100
     
-    # Check if we actually have enough data to skip 200 steps
     if total_steps > (skip_start + skip_end):
+        # A. First find the global minimum for velocity in the safe middle region
         search_window_vel = vel_push_axis[skip_start : -skip_end]
         t_peak_vel = int(np.argmin(search_window_vel)) + skip_start
 
-        search_window_acc = acc_push_axis[skip_start : -skip_end]
-        t_peak_acc = int(np.argmin(search_window_acc)) + skip_start
+        # B. Define a local search window (e.g., 20 steps before and after the velocity drop)
+        acc_search_radius = 20
+        local_start = max(0, t_peak_vel - acc_search_radius)
+        local_end = min(total_steps, t_peak_vel + acc_search_radius)
 
-        t_peak_diff = abs(t_peak_acc - t_peak_vel)
-        T_BEFORE-=t_peak_diff
-        t_peak = t_peak_vel
-        print("t_peak_acc: ", t_peak_acc)
-        print("t_peak_vel: ", t_peak_vel)
+        # C. Find the maximum deceleration (min acceleration) strictly within this local window
+        local_search_window_acc = acc_push_axis[local_start:local_end]
+        t_peak_acc = int(np.argmin(local_search_window_acc)) + local_start
+
+        # D. Set the official peak to the exact moment of impact (Acceleration Peak)
+        t_peak = t_peak_acc
+
+        print(f"t_peak_vel (Velocity Drop): {t_peak_vel}")
+        print(f"t_peak_acc (Impact Spike):  {t_peak_acc}")
+        print(f"Time Difference:            {abs(t_peak_acc - t_peak_vel)} steps")
+        
     else:
-        print(f"⚠️ Sequence too short ({total_steps} steps) to exclude 100 from both ends. Searching full sequence.")
+        print(f"⚠️ Sequence too short ({total_steps} steps). Searching full sequence.")
         t_peak = int(np.argmin(acc_push_axis))
         
-    print(f"--- Detected Impact (Negative Peak) at Step {t_peak} ---")
+    print(f"--- Final Anchored Impact Peak at Step {t_peak} ---")
 
     # 2. Define Inference Indices (Absolute)
     inf_start_abs = max(0, t_peak + T_BEFORE)
