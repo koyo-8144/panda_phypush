@@ -72,4 +72,4 @@ PUSHSET_Q = PUSHSET_Q_FAR
 PUSHSET_POSE = PUSHSET_POSE_V1
 USE_IK = 0
 
-HOSTNAME = hostname_bob
+HOSTNAME = hostname_vincent
