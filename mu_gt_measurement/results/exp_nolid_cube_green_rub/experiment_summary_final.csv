@@ -1,0 +1,17 @@
+Filename,Distance_m,mu_d,Valid
+velocity_20260224_233932.csv,0.5329,0.2552,True
+velocity_20260224_232946.csv,0.4964,0.2783,True
+velocity_20260224_233212.csv,0.574,0.2363,True
+velocity_20260224_233631.csv,0.471,0.1175,True
+velocity_20260224_233244.csv,0.4665,0.2226,True
+velocity_20260224_232752.csv,0.5124,0.343,True
+velocity_20260224_233044.csv,0.5185,0.1862,True
+velocity_20260224_233648.csv,0.4254,0.285,True
+velocity_20260224_234204.csv,0.5502,0.3074,True
+velocity_20260224_232916.csv,0.5907,0.3315,True
+
+--- STATISTICS (VALID TRIALS ONLY) ---
+Valid Trials,10 of 10
+Clean Average mu_d,0.2563
+Clean Std Deviation,0.0690
+New Relative Error,26.91%

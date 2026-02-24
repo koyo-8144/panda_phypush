@@ -36,6 +36,24 @@ def main():
     config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
     
     profile = pipeline.start(config)
+
+    # Get the sensor handle for the RGB camera
+    device = profile.get_device()
+    color_sensor = device.first_color_sensor()
+
+    # 1. Disable Auto Exposure
+    color_sensor.set_option(rs.option.enable_auto_exposure, 0)
+
+    # 2. Set Manual Exposure (Value is in microseconds)
+    # Start with 1000. If the image is too dark, increase to 2000.
+    # If the marker still blurs, decrease to 500 (requires very bright room light).
+    color_sensor.set_option(rs.option.exposure, 500)
+
+    # 3. Set Gain (Higher gain makes it brighter but noisier)
+    # Values range from 0 to 128. Try 64.
+    color_sensor.set_option(rs.option.gain, 64)
+
+    print("✅ Manual Exposure Set to 1000us. Ensure your work area is BRIGHTLY lit.")
     
     color_stream = profile.get_stream(rs.stream.color)
     intrinsics = color_stream.as_video_stream_profile().get_intrinsics()
@@ -84,10 +102,14 @@ def main():
                     if prev_tvec is not None and prev_time is not None:
                         dt = current_time - prev_time
                         if dt > 0:
+                            # velocity_vector = (tvec - prev_tvec) / dt
+                            # # Calculate speed ONLY on the flat sliding surface (Green/Y and Blue/Z)
+                            # # velocity_vector[1] is Y, velocity_vector[2] is Z. We ignore [0] which is X (Up)
+                            # speed = np.linalg.norm([velocity_vector[1], velocity_vector[2]])
                             velocity_vector = (tvec - prev_tvec) / dt
-                            # Calculate speed ONLY on the flat sliding surface (Green/Y and Blue/Z)
-                            # velocity_vector[1] is Y, velocity_vector[2] is Z. We ignore [0] which is X (Up)
-                            speed = np.linalg.norm([velocity_vector[1], velocity_vector[2]])
+                            # Calculate speed ONLY on the flat table surface (Left/Right X and Depth Z)
+                            # velocity_vector[0] is X, velocity_vector[2] is Z. We ignore [1] which is vertical Y.
+                            speed = np.linalg.norm([velocity_vector[0], velocity_vector[2]])
 
                             velocity_text = f"Speed: {speed:.3f} m/s"
                             cv2.putText(color_image, velocity_text, (10, 30), 
