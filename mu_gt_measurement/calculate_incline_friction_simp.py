@@ -14,7 +14,7 @@ MANUAL_TIMES = [
     # 0.82,  # Example Trial 2
     # 0.88,  # Example Trial 3
     # # ... keep adding your times separated by commas
-    0.57
+    0.49
 ]
 
 def main():

@@ -2,8 +2,14 @@ import os
 import shutil
 from datetime import datetime
 
-OBJECT="nolid_cube"
-SURFACE="green_rub"
+# OBJECT="nolid_cube"
+# OBJECT="blue_cylinder"
+# OBJECT="colored_cubes"
+OBJECT="wooden_cube"
+
+# SURFACE="green_rub"
+SURFACE="wood"
+# SURFACE=""
 
 def archive():
     # Create a unique folder for this entire experiment batch
@@ -11,7 +17,8 @@ def archive():
     target_dir = os.path.join("results", batch_name)
     
     # Folders to move
-    folders_to_move = ['aruco_velocity', 'videos', 'plots']
+    # folders_to_move = ['aruco_velocity', 'videos', 'plots']
+    folders_to_move = ['aruco_velocity', 'videos']
     # Files to copy
     # files_to_copy = ['experiment_summary_final.csv']
     files_to_copy = ['"incline_experiment_summary.csv"']
