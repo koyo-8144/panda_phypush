@@ -5,15 +5,13 @@ import math
 # --- EXPERIMENT CONFIGURATION ---
 G = 9.81
 THETA_DEGREES = 33.0  # Your measured ramp angle
-DISTANCE_M = 0.42  # 0.90     # Your manually measured distance (0.9 meters)
+# DISTANCE_M = 0.42  # 0.90     # Your manually measured distance (0.9 meters)
+DISTANCE_M_GREEN_RUB = 0.90 # top to bottom
+DISTANCE_M_WOOD_SMOOTH_ROUGH = 1.22  # top to bottom
 
 # ⏱️ ENTER YOUR MEASURED TIMES HERE:
 # Just type the times (in seconds) you read from your video timestamps for each slide.
 MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB = [
-    # 0.85,  # Example Trial 1
-    # 0.82,  # Example Trial 2
-    # 0.88,  # Example Trial 3
-    # # ... keep adding your times separated by commas
     0.49,
     0.48,
     0.48,
@@ -26,11 +24,15 @@ MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB = [
     0.49,
 ]
 
+MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB = [
+    
+]
+
 
 def main():
-    if not MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB:
-        print("❌ Please enter your measured times into the MANUAL_TIMES list.")
-        return
+    # if not MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB:
+    #     print("❌ Please enter your measured times into the MANUAL_TIMES list.")
+    #     return
 
     print(
         f"📐 Calculating Friction for {len(MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB)} manual trials..."
