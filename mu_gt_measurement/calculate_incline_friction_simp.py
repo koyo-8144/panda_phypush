@@ -5,26 +5,65 @@ import math
 # --- EXPERIMENT CONFIGURATION ---
 G = 9.81
 THETA_DEGREES = 33.0  # Your measured ramp angle
-# DISTANCE_M = 0.42  # 0.90     # Your manually measured distance (0.9 meters)
-DISTANCE_M_GREEN_RUB = 0.90 # top to bottom
-DISTANCE_M_WOOD_SMOOTH_ROUGH = 1.22  # top to bottom
+
+GREEN_RUB = 1
+WOOD_SMOOTH = 0
+WOOD_ROUGH = 0
+
+DISTANCE_M_GREEN_RUB = 0.90 # top to bottom (0.9 meters)
+DISTANCE_M_WOOD_SMOOTH_ROUGH = 1.22  # top to bottom (1.22 meters)
 
 # ⏱️ ENTER YOUR MEASURED TIMES HERE:
 # Just type the times (in seconds) you read from your video timestamps for each slide.
+
+# ---------- GREEN RUB ----------
 MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB = [
-    0.49,
-    0.48,
-    0.48,
-    0.48,
-    0.50,
-    0.47,
-    0.49,
-    0.51,
-    0.50,
-    0.49,
+
 ]
 
-MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB = [
+MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB = [
+    
+]
+
+MANUAL_TIMES_COLORED_CUBES_GREEN_RUB = [
+    
+]
+
+MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB = [
+    
+]
+
+# ---------- WOOD SMOOTH ----------
+MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH = [
+ 
+]
+
+MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH = [
+    
+]
+
+MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH = [
+    
+]
+
+MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH = [
+    
+]
+
+# ---------- WOOD ROUGH ----------
+MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH = [
+ 
+]
+
+MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH = [
+    
+]
+
+MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH = [
+    
+]
+
+MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH = [
     
 ]
 
