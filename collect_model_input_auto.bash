@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- 0. EXPERIMENT SETTINGS ---
-OBJECT="nolid_cube_0."
-SURFACE="green_rub"
+OBJECT="nolid_cube_0.694"
+SURFACE="green_rub" # "black_rub_front"
 NUM_RUNS=10
 SCRIPT_NAME="collect_model_input.py"
 
