@@ -6,7 +6,7 @@ import math
 
 # --- EXPERIMENT CONFIGURATION ---
 G = 9.81 
-THETA_DEGREES = 15.0
+THETA_DEGREES = 33.0
 
 def calculate_incline_friction(file_path):
     try:
@@ -19,6 +19,7 @@ def calculate_incline_friction(file_path):
         df['Displacement'] = np.sqrt((df['Px'] - start_x)**2 + 
                                      (df['Py'] - start_y)**2 + 
                                      (df['Pz'] - start_z)**2)
+        df['Displacement'] = np.array([0.9])
         
         # 2. Robust Start/Stop Detection
         # Start: The last frame before the object moved more than 1 cm (0.01m)

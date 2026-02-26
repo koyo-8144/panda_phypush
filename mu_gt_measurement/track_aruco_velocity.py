@@ -21,7 +21,8 @@ def main():
 
     # Initialize Video Writer
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video_writer = cv2.VideoWriter(video_filepath, fourcc, 30.0, (640, 480))
+    # video_writer = cv2.VideoWriter(video_filepath, fourcc, 30.0, (640, 480))
+    video_writer = cv2.VideoWriter(video_filepath, fourcc, 90.0, (480, 270))
 
     # Initialize CSV Data Logger
     csv_file = open(csv_filepath, mode='w', newline='')
@@ -33,8 +34,10 @@ def main():
     # 1. Initialize RealSense Pipeline
     pipeline = rs.pipeline()
     config = rs.config()
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+    # config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 60)
+    config.enable_stream(rs.stream.color, 480, 270, rs.format.bgr8, 90)
     
+
     profile = pipeline.start(config)
 
     # Get the sensor handle for the RGB camera
@@ -47,9 +50,10 @@ def main():
     # 2. Set Manual Exposure (Value is in microseconds)
     # Start with 1000. If the image is too dark, increase to 2000.
     # If the marker still blurs, decrease to 500 (requires very bright room light).
-    color_sensor.set_option(rs.option.exposure, 500)
+    # color_sensor.set_option(rs.option.exposure, 500)
+    color_sensor.set_option(rs.option.exposure, 100)
 
-    # 3. Set Gain (Higher gain makes it brighter but noisier)
+    # 3. Set Gain (Higher gain makes it b righter but noisier)
     # Values range from 0 to 128. Try 64.
     color_sensor.set_option(rs.option.gain, 64)
 
@@ -84,6 +88,13 @@ def main():
             color_image = np.asanyarray(color_frame.get_data())
             current_time = time.time()
 
+            # --- NEW: ALWAYS DRAW CURRENT TIME (0.01s precision) ---
+            live_time_str = datetime.now().strftime("%H:%M:%S.%f")[:-4]
+            # CHANGED: Moved from 460 to 250 so it fits on a 270p screen!
+            cv2.putText(color_image, f"Time: {live_time_str}", (10, 250), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 165, 255), 2, cv2.LINE_AA)
+            # -------------------------------------------------------
+
             # 3. Detect ArUco markers
             corners, ids, rejected = detector.detectMarkers(color_image)
 
@@ -102,13 +113,8 @@ def main():
                     if prev_tvec is not None and prev_time is not None:
                         dt = current_time - prev_time
                         if dt > 0:
-                            # velocity_vector = (tvec - prev_tvec) / dt
-                            # # Calculate speed ONLY on the flat sliding surface (Green/Y and Blue/Z)
-                            # # velocity_vector[1] is Y, velocity_vector[2] is Z. We ignore [0] which is X (Up)
-                            # speed = np.linalg.norm([velocity_vector[1], velocity_vector[2]])
                             velocity_vector = (tvec - prev_tvec) / dt
                             # Calculate speed ONLY on the flat table surface (Left/Right X and Depth Z)
-                            # velocity_vector[0] is X, velocity_vector[2] is Z. We ignore [1] which is vertical Y.
                             speed = np.linalg.norm([velocity_vector[0], velocity_vector[2]])
 
                             velocity_text = f"Speed: {speed:.3f} m/s"
@@ -119,7 +125,7 @@ def main():
                             cv2.putText(color_image, coords_text, (10, 60), 
                                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2, cv2.LINE_AA)
 
-                            # CHANGED: Now saving Px, Py, and Pz directly into the CSV
+                            # Saving Px, Py, and Pz directly into the CSV
                             csv_writer.writerow([
                                 f"{current_time:.4f}", 
                                 f"{px:.4f}", 
