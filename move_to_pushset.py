@@ -31,14 +31,15 @@ def move_to_pushset():
         # 2. Reset to Neutral first
         # This clears any previous weird states and gives us a clean starting point.
         print("Moving to Neutral (Start) Position...")
-        panda.move_to_start()
+        #panda.move_to_start()
         
         # 3. Move to the Saved Target
         # We use joint positions because it is the most deterministic way 
         # to reach a specific configuration without flipping the elbow.
         print("Moving to Saved Pushset Configuration...")
+        # gripper.move(width=0.06, speed=0.1)
         # Grasp (width, speed, force, epsilon_inner, epsilon_outer)
-        gripper.grasp(0, 0.2, 10, 0.04, 0.04)
+        gripper.grasp(0.05, 0.2, 10, 0.04, 0.04)
         time.sleep(1.0)
 
         if USE_IK:

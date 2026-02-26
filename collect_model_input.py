@@ -221,9 +221,15 @@ def run_push_and_collect(run_id="manual", m_gt="None", mu_gt="None", obj_name="u
     try:
         print(f"Connecting to {HOSTNAME}...")
         panda = panda_py.Panda(HOSTNAME)
+        gripper = libfranka.Gripper(HOSTNAME)
         
         print(f"Moving to Pushset Pose...")
         panda.move_to_joint_position(PUSHSET_Q, speed_factor=0.2)
+        if "colored_cubes" in obj_name:
+            gripper.move(width=0.06, speed=0.1)
+        else:
+            state = gripper.read_once()
+            gripper.move(width=state.max_width, speed=0.1)
         time.sleep(2.0)
         
         # START the Velocity Controller for the set motion
