@@ -4,12 +4,12 @@ from datetime import datetime
 
 # OBJECT="nolid_cube"
 # OBJECT="blue_cylinder"
-OBJECT="colored_cubes"
-# OBJECT="wooden_cube"
+# OBJECT="colored_cubes"
+OBJECT="wooden_cube"
 
 # SURFACE="green_rub"
-SURFACE="wood_smooth"
-# SURFACE="wood_rough"
+# SURFACE="wood_smooth"
+SURFACE="wood_rough"
 
 def archive():
     # Create a unique folder for this entire experiment batch
