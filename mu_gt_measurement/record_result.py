@@ -13,7 +13,8 @@ def archive():
     # Folders to move
     folders_to_move = ['aruco_velocity', 'videos', 'plots']
     # Files to copy
-    files_to_copy = ['experiment_summary_final.csv']
+    # files_to_copy = ['experiment_summary_final.csv']
+    files_to_copy = ['"incline_experiment_summary.csv"']
     
     os.makedirs(target_dir, exist_ok=True)
     

@@ -27,7 +27,7 @@ def main():
     csv_file = open(csv_filepath, mode='w', newline='')
     csv_writer = csv.writer(csv_file)
     
-    # CHANGED: Added Px, Py, and Pz to the header
+    # Added Px, Py, and Pz to the header
     csv_writer.writerow(['Timestamp', 'Px', 'Py', 'Pz', 'Speed_m_s', 'Vx', 'Vy', 'Vz'])
 
     # 1. Initialize RealSense Pipeline
