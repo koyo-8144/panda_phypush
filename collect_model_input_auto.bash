@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- 0. EXPERIMENT SETTINGS ---
-OBJECT="blue_cylinder_0.169" # "colored_cubes_0.397" # "wooden_cube_0.570"  # "nolid_cube_1.856"
-SURFACE="green_rub" # "black_rub_front"
+OBJECT="blue_cylinder_0.175" #"colored_cubes_0.989" # "wooden_cube_0.570"  # "nolid_cube_1.856"
+SURFACE="wood_smooth" # "wood_rough" # "green_rub"
 NUM_RUNS=10
 SCRIPT_NAME="collect_model_input.py"
 
