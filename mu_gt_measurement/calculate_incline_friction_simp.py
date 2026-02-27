@@ -10,7 +10,7 @@ GREEN_RUB = 1
 WOOD_SMOOTH = 0
 WOOD_ROUGH = 0
 
-DISTANCE_M_GREEN_RUB = 0.90 # top to bottom (0.9 meters)
+DISTANCE_M_GREEN_RUB = 0.90 - 0.15 # top to bottom (0.9 meters)
 DISTANCE_M_WOOD_SMOOTH_ROUGH = 1.22  # top to bottom (1.22 meters)
 
 # ⏱️ ENTER YOUR MEASURED TIMES HERE:
@@ -18,15 +18,33 @@ DISTANCE_M_WOOD_SMOOTH_ROUGH = 1.22  # top to bottom (1.22 meters)
 
 # ---------- GREEN RUB ----------
 MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB = [
-
+25.30-24.12,
+33.14-32.05,
+41.68-40.50,
+53.07-51.94,
+20.77-19.57,
+18.57-17.47,
+25.85-24.68,
+37.05-35.90,
+50.43-49.28,
+11.47-10.21,
 ]
 
 MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB = [
-    
+
 ]
 
 MANUAL_TIMES_COLORED_CUBES_GREEN_RUB = [
-    
+51.02-50.15,
+2.79-2.05,
+14.57-13.83,
+28.61-27.87,
+39.72-39.03,
+53.29-52.56,
+6.68-5.98,
+19.98-19.30,
+33.86-33.14,  
+48.60-47.86,  
 ]
 
 MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB = [
@@ -69,61 +87,108 @@ MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH = [
 
 
 def main():
-    # if not MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB:
-    #     print("❌ Please enter your measured times into the MANUAL_TIMES list.")
-    #     return
-
-    print(
-        f"📐 Calculating Friction for {len(MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB)} manual trials..."
-    )
+    # 1. Map all your data into a structure we can loop through
+    experiments = []
+    
+    if GREEN_RUB:
+        dist = DISTANCE_M_GREEN_RUB
+        experiments.extend([
+            {"surface": "Green Rub", "object": "No Lid Cube", "dist": dist, "times": MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB},
+            {"surface": "Green Rub", "object": "Blue Cylinder", "dist": dist, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
+            {"surface": "Green Rub", "object": "Colored Cubes", "dist": dist, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
+            {"surface": "Green Rub", "object": "Wooden Cube", "dist": dist, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
+        ])
+        
+    if WOOD_SMOOTH:
+        dist = DISTANCE_M_WOOD_SMOOTH_ROUGH
+        experiments.extend([
+            {"surface": "Wood Smooth", "object": "No Lid Cube", "dist": dist, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
+            {"surface": "Wood Smooth", "object": "Blue Cylinder", "dist": dist, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
+            {"surface": "Wood Smooth", "object": "Colored Cubes", "dist": dist, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
+            {"surface": "Wood Smooth", "object": "Wooden Cube", "dist": dist, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
+        ])
+        
+    if WOOD_ROUGH:
+        dist = DISTANCE_M_WOOD_SMOOTH_ROUGH
+        experiments.extend([
+            {"surface": "Wood Rough", "object": "No Lid Cube", "dist": dist, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
+            {"surface": "Wood Rough", "object": "Blue Cylinder", "dist": dist, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
+            {"surface": "Wood Rough", "object": "Colored Cubes", "dist": dist, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
+            {"surface": "Wood Rough", "object": "Wooden Cube", "dist": dist, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
+        ])
 
     theta_rad = math.radians(THETA_DEGREES)
-    results = []
+    all_results = []
+    summary_stats = []
 
-    for i, t in enumerate(MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB):
-        if t <= 0:
-            continue
+    # 2. Process everything
+    for exp in experiments:
+        if not exp["times"]: 
+            continue # Skip empty lists
+            
+        mu_k_list = []
+        
+        for i, t in enumerate(exp["times"]):
+            if t <= 0: continue
 
-        # 1. Acceleration: a = 2d / t^2
-        a = (2 * DISTANCE_M) / (t**2)
+            # Kinematics & Forces Math
+            a = (2 * exp["dist"]) / (t**2)
+            mu_k = np.tan(theta_rad) - (a / (G * np.cos(theta_rad)))
+            mu_k_list.append(mu_k)
 
-        # 2. Friction Coeff: mu_k = tan(theta) - a / (g * cos(theta))
-        mu_k = np.tan(theta_rad) - (a / (G * np.cos(theta_rad)))
-
-        results.append(
-            {
+            all_results.append({
+                "Surface": exp["surface"],
+                "Object": exp["object"],
                 "Trial": i + 1,
-                "Distance_m": DISTANCE_M,
-                "Time_s": t,
+                "Distance_m": exp["dist"],
+                "Time_s": round(t, 4),
                 "Accel_m_s2": round(a, 4),
                 "mu_k": round(mu_k, 4),
-            }
-        )
+            })
 
-    # Convert to DataFrame for nice formatting
-    df_all = pd.DataFrame(results)
+        # Calculate Group Statistics
+        if mu_k_list:
+            mean_mu = np.mean(mu_k_list)
+            std_mu = np.std(mu_k_list, ddof=1) if len(mu_k_list) > 1 else 0
+            rel_error = (std_mu / mean_mu) * 100 if mean_mu != 0 else 0
+            
+            summary_stats.append({
+                "Surface": exp["surface"],
+                "Object": exp["object"],
+                "Trials": len(mu_k_list),
+                "Avg_mu_k": round(mean_mu, 4),
+                "Std_Dev": round(std_mu, 4),
+                "Rel_Error_%": round(rel_error, 2)
+            })
 
-    # Calculate Statistics
-    mean_mu = df_all["mu_k"].mean()
-    std_mu = df_all["mu_k"].std()
-    rel_error = (std_mu / mean_mu) * 100 if mean_mu != 0 else 0
+    # 3. Print & Save
+    if not all_results:
+        print("❌ No data found to process. Please add times to your active lists.")
+        return
 
-    # Print Report
-    print("\n" + "=" * 55)
-    print("🔬 MANUAL INCLINED PLANE SUMMARY REPORT")
-    print("=" * 55)
+    df_all = pd.DataFrame(all_results)
+    df_summary = pd.DataFrame(summary_stats)
+
+    print("\n" + "=" * 70)
+    print(f"🔬 MANUAL INCLINED PLANE SUMMARY (Angle: {THETA_DEGREES}°)")
+    print("=" * 70)
+    print("\n--- OVERALL STATISTICS ---")
+    print(df_summary.to_string(index=False))
+    
+    print("\n--- INDIVIDUAL TRIALS ---")
     print(df_all.to_string(index=False))
-    print("-" * 55)
-    print(f"Fixed Distance: {DISTANCE_M} m | Angle: {THETA_DEGREES}°")
-    print(f"Average μk:     {mean_mu:.4f}")
-    print(f"StdDev:         {std_mu:.4f}")
-    print(f"Error:          {rel_error:.2f}%")
-    print("=" * 55)
+    print("=" * 70)
 
     # Save to CSV
     summary_path = "manual_incline_summary.csv"
     df_all.to_csv(summary_path, index=False)
-    print(f"\n📁 Report saved to: {summary_path}")
+    
+    # Append the stats to the bottom of the CSV
+    with open(summary_path, 'a') as f:
+        f.write("\n\n--- STATISTICS ---\n")
+        df_summary.to_csv(f, index=False)
+        
+    print(f"\n📁 Detailed report saved to: {summary_path}")
 
 
 if __name__ == "__main__":
