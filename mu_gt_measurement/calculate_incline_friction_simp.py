@@ -6,10 +6,6 @@ import math
 G = 9.81
 THETA_DEGREES = 33.0  # Your measured ramp angle
 
-GREEN_RUB = 1
-WOOD_SMOOTH = 0
-WOOD_ROUGH = 0
-
 NO_LID_CUBE_LEN = 0.15
 BLUE_CYLINDER_LEN = 0.1
 COLORED_CUBES_LEN = 0.12
@@ -182,35 +178,29 @@ MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH = [
 
 
 def main():
-    # 1. Map all your data into a structure we can loop through
-    experiments = []
+    # 1. Map all data continuously without toggle checks
+    dist_gr = DISTANCE_M_GREEN_RUB
+    dist_wsr = DISTANCE_M_WOOD_SMOOTH_ROUGH
     
-    if GREEN_RUB:
-        dist = DISTANCE_M_GREEN_RUB
-        experiments.extend([
-            {"surface": "Green Rub", "object": "No Lid Cube", "dist": dist - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB},
-            {"surface": "Green Rub", "object": "Blue Cylinder", "dist": dist - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
-            {"surface": "Green Rub", "object": "Colored Cubes", "dist": dist - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
-            {"surface": "Green Rub", "object": "Wooden Cube", "dist": dist - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
-        ])
+    experiments = [
+        # GREEN RUB
+        {"surface": "Green Rub", "object": "No Lid Cube", "dist": dist_gr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB},
+        {"surface": "Green Rub", "object": "Blue Cylinder", "dist": dist_gr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
+        {"surface": "Green Rub", "object": "Colored Cubes", "dist": dist_gr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
+        {"surface": "Green Rub", "object": "Wooden Cube", "dist": dist_gr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
         
-    if WOOD_SMOOTH:
-        dist = DISTANCE_M_WOOD_SMOOTH_ROUGH
-        experiments.extend([
-            {"surface": "Wood Smooth", "object": "No Lid Cube", "dist": dist - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
-            {"surface": "Wood Smooth", "object": "Blue Cylinder", "dist": dist - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
-            {"surface": "Wood Smooth", "object": "Colored Cubes", "dist": dist - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
-            {"surface": "Wood Smooth", "object": "Wooden Cube", "dist": dist - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
-        ])
+        # WOOD SMOOTH
+        {"surface": "Wood Smooth", "object": "No Lid Cube", "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
+        {"surface": "Wood Smooth", "object": "Blue Cylinder", "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
+        {"surface": "Wood Smooth", "object": "Colored Cubes", "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
+        {"surface": "Wood Smooth", "object": "Wooden Cube", "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
         
-    if WOOD_ROUGH:
-        dist = DISTANCE_M_WOOD_SMOOTH_ROUGH
-        experiments.extend([
-            {"surface": "Wood Rough", "object": "No Lid Cube", "dist": dist - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
-            {"surface": "Wood Rough", "object": "Blue Cylinder", "dist": dist - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
-            {"surface": "Wood Rough", "object": "Colored Cubes", "dist": dist - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
-            {"surface": "Wood Rough", "object": "Wooden Cube", "dist": dist - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
-        ])
+        # WOOD ROUGH
+        {"surface": "Wood Rough", "object": "No Lid Cube", "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "Blue Cylinder", "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "Colored Cubes", "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "Wooden Cube", "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
+    ]
 
     theta_rad = math.radians(THETA_DEGREES)
     all_results = []
@@ -258,7 +248,7 @@ def main():
 
     # 3. Print & Save
     if not all_results:
-        print("❌ No data found to process. Please add times to your active lists.")
+        print("❌ No data found to process. Please add times to your lists.")
         return
 
     df_all = pd.DataFrame(all_results)
@@ -271,7 +261,8 @@ def main():
     print(df_summary.to_string(index=False))
     
     print("\n--- INDIVIDUAL TRIALS ---")
-    print(df_all.to_string(index=False))
+    # Uncomment the line below if you want the massive list of individual trials printed to the terminal too
+    # print(df_all.to_string(index=False)) 
     print("=" * 70)
 
     # Save to CSV
