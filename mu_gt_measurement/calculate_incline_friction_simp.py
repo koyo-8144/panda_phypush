@@ -10,7 +10,12 @@ GREEN_RUB = 1
 WOOD_SMOOTH = 0
 WOOD_ROUGH = 0
 
-DISTANCE_M_GREEN_RUB = 0.90 - 0.15 # top to bottom (0.9 meters)
+NO_LID_CUBE_LEN = 0.15
+BLUE_CYLINDER_LEN = 0.15
+COLORED_CUBES_LEN = 0.15
+WOODEN_CUBE_LEN = 0.15
+
+DISTANCE_M_GREEN_RUB = 0.90 # top to bottom (0.9 meters)
 DISTANCE_M_WOOD_SMOOTH_ROUGH = 1.22  # top to bottom (1.22 meters)
 
 # ⏱️ ENTER YOUR MEASURED TIMES HERE:
@@ -71,36 +76,108 @@ MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB = [
 
 # ---------- WOOD SMOOTH ----------
 MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH = [
- 
+27.80-26.86,
+34.23-33.26,
+41.16-40.32,
+47.85-46.90,
+54.59-53.74,
+1.21-0.26,
+7.75-6.87,
+14.51-13.55,
+21.87-21.00,
+29.85-28.80,
 ]
 
 MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH = [
-    
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
 ]
 
 MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH = [
-    
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
 ]
 
 MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH = [
-    
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
 ]
 
 # ---------- WOOD ROUGH ----------
 MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH = [
- 
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
 ]
 
 MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH = [
-    
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
 ]
 
 MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH = [
-    
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
 ]
 
 MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH = [
-    
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
 ]
 
 
@@ -111,28 +188,28 @@ def main():
     if GREEN_RUB:
         dist = DISTANCE_M_GREEN_RUB
         experiments.extend([
-            {"surface": "Green Rub", "object": "No Lid Cube", "dist": dist, "times": MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB},
-            {"surface": "Green Rub", "object": "Blue Cylinder", "dist": dist, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
-            {"surface": "Green Rub", "object": "Colored Cubes", "dist": dist, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
-            {"surface": "Green Rub", "object": "Wooden Cube", "dist": dist, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
+            {"surface": "Green Rub", "object": "No Lid Cube", "dist": dist - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB},
+            {"surface": "Green Rub", "object": "Blue Cylinder", "dist": dist - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
+            {"surface": "Green Rub", "object": "Colored Cubes", "dist": dist - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
+            {"surface": "Green Rub", "object": "Wooden Cube", "dist": dist - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
         ])
         
     if WOOD_SMOOTH:
         dist = DISTANCE_M_WOOD_SMOOTH_ROUGH
         experiments.extend([
-            {"surface": "Wood Smooth", "object": "No Lid Cube", "dist": dist, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
-            {"surface": "Wood Smooth", "object": "Blue Cylinder", "dist": dist, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
-            {"surface": "Wood Smooth", "object": "Colored Cubes", "dist": dist, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
-            {"surface": "Wood Smooth", "object": "Wooden Cube", "dist": dist, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
+            {"surface": "Wood Smooth", "object": "No Lid Cube", "dist": dist - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
+            {"surface": "Wood Smooth", "object": "Blue Cylinder", "dist": dist - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
+            {"surface": "Wood Smooth", "object": "Colored Cubes", "dist": dist - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
+            {"surface": "Wood Smooth", "object": "Wooden Cube", "dist": dist - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
         ])
         
     if WOOD_ROUGH:
         dist = DISTANCE_M_WOOD_SMOOTH_ROUGH
         experiments.extend([
-            {"surface": "Wood Rough", "object": "No Lid Cube", "dist": dist, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
-            {"surface": "Wood Rough", "object": "Blue Cylinder", "dist": dist, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
-            {"surface": "Wood Rough", "object": "Colored Cubes", "dist": dist, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
-            {"surface": "Wood Rough", "object": "Wooden Cube", "dist": dist, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
+            {"surface": "Wood Rough", "object": "No Lid Cube", "dist": dist - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
+            {"surface": "Wood Rough", "object": "Blue Cylinder", "dist": dist - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
+            {"surface": "Wood Rough", "object": "Colored Cubes", "dist": dist - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
+            {"surface": "Wood Rough", "object": "Wooden Cube", "dist": dist - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
         ])
 
     theta_rad = math.radians(THETA_DEGREES)
@@ -158,7 +235,7 @@ def main():
                 "Surface": exp["surface"],
                 "Object": exp["object"],
                 "Trial": i + 1,
-                "Distance_m": exp["dist"],
+                "Distance_m": round(exp["dist"], 4),
                 "Time_s": round(t, 4),
                 "Accel_m_s2": round(a, 4),
                 "mu_k": round(mu_k, 4),
