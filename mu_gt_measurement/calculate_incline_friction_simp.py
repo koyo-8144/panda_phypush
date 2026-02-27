@@ -5,6 +5,7 @@ import math
 # --- EXPERIMENT CONFIGURATION ---
 G = 9.81
 THETA_DEGREES = 33.0  # Your measured ramp angle
+THETA_SPECIAL = 31.5
 
 NO_LID_CUBE_LEN = 0.15
 BLUE_CYLINDER_LEN = 0.1
@@ -183,26 +184,25 @@ def main():
     dist_wsr = DISTANCE_M_WOOD_SMOOTH_ROUGH
     
     experiments = [
-        # GREEN RUB
-        {"surface": "Green Rub", "object": "No Lid Cube", "dist": dist_gr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB},
-        {"surface": "Green Rub", "object": "Blue Cylinder", "dist": dist_gr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
-        {"surface": "Green Rub", "object": "Colored Cubes", "dist": dist_gr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
-        {"surface": "Green Rub", "object": "Wooden Cube", "dist": dist_gr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
+        # GREEN RUB (Notice the special angle 32.0 assigned here!)
+        {"surface": "Green Rub", "object": "No Lid Cube", "angle": THETA_SPECIAL, "dist": dist_gr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_GREEN_RUB},
+        {"surface": "Green Rub", "object": "Blue Cylinder", "angle": THETA_DEGREES, "dist": dist_gr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
+        {"surface": "Green Rub", "object": "Colored Cubes", "angle": THETA_DEGREES, "dist": dist_gr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
+        {"surface": "Green Rub", "object": "Wooden Cube", "angle": THETA_DEGREES, "dist": dist_gr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
         
         # WOOD SMOOTH
-        {"surface": "Wood Smooth", "object": "No Lid Cube", "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
-        {"surface": "Wood Smooth", "object": "Blue Cylinder", "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
-        {"surface": "Wood Smooth", "object": "Colored Cubes", "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
-        {"surface": "Wood Smooth", "object": "Wooden Cube", "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
+        {"surface": "Wood Smooth", "object": "No Lid Cube", "angle": THETA_DEGREES, "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
+        {"surface": "Wood Smooth", "object": "Blue Cylinder", "angle": THETA_DEGREES, "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
+        {"surface": "Wood Smooth", "object": "Colored Cubes", "angle": THETA_DEGREES, "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
+        {"surface": "Wood Smooth", "object": "Wooden Cube", "angle": THETA_DEGREES, "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
         
         # WOOD ROUGH
-        {"surface": "Wood Rough", "object": "No Lid Cube", "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
-        {"surface": "Wood Rough", "object": "Blue Cylinder", "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
-        {"surface": "Wood Rough", "object": "Colored Cubes", "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
-        {"surface": "Wood Rough", "object": "Wooden Cube", "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "No Lid Cube", "angle": THETA_DEGREES, "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "Blue Cylinder", "angle": THETA_DEGREES, "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "Colored Cubes", "angle": THETA_DEGREES, "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "Wooden Cube", "angle": THETA_DEGREES, "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
     ]
 
-    theta_rad = math.radians(THETA_DEGREES)
     all_results = []
     summary_stats = []
 
@@ -212,6 +212,9 @@ def main():
             continue # Skip empty lists
             
         mu_k_list = []
+        
+        # Calculate the angle specific to THIS experiment
+        theta_rad = math.radians(exp["angle"])
         
         for i, t in enumerate(exp["times"]):
             if t <= 0: continue
@@ -225,6 +228,7 @@ def main():
                 "Surface": exp["surface"],
                 "Object": exp["object"],
                 "Trial": i + 1,
+                "Angle": exp["angle"],
                 "Distance_m": round(exp["dist"], 4),
                 "Time_s": round(t, 4),
                 "Accel_m_s2": round(a, 4),
@@ -240,6 +244,7 @@ def main():
             summary_stats.append({
                 "Surface": exp["surface"],
                 "Object": exp["object"],
+                "Angle": exp["angle"],
                 "Trials": len(mu_k_list),
                 "Avg_mu_k": round(mean_mu, 4),
                 "Std_Dev": round(std_mu, 4),
@@ -254,16 +259,16 @@ def main():
     df_all = pd.DataFrame(all_results)
     df_summary = pd.DataFrame(summary_stats)
 
-    print("\n" + "=" * 70)
-    print(f"🔬 MANUAL INCLINED PLANE SUMMARY (Angle: {THETA_DEGREES}°)")
-    print("=" * 70)
+    print("\n" + "=" * 80)
+    print("🔬 MANUAL INCLINED PLANE SUMMARY")
+    print("=" * 80)
     print("\n--- OVERALL STATISTICS ---")
     print(df_summary.to_string(index=False))
     
     print("\n--- INDIVIDUAL TRIALS ---")
     # Uncomment the line below if you want the massive list of individual trials printed to the terminal too
     # print(df_all.to_string(index=False)) 
-    print("=" * 70)
+    print("=" * 80)
 
     # Save to CSV
     summary_path = "manual_incline_summary.csv"
