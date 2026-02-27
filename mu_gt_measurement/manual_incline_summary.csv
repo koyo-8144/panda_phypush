@@ -1,49 +1,49 @@
 Surface,Object,Trial,Distance_m,Time_s,Accel_m_s2,mu_k
-Green Rub,No Lid Cube,1,0.9,1.18,1.2927,0.4923
-Green Rub,No Lid Cube,2,0.9,1.09,1.515,0.4653
-Green Rub,No Lid Cube,3,0.9,1.18,1.2927,0.4923
-Green Rub,No Lid Cube,4,0.9,1.13,1.4097,0.4781
-Green Rub,No Lid Cube,5,0.9,1.2,1.25,0.4975
-Green Rub,No Lid Cube,6,0.9,1.1,1.4876,0.4686
-Green Rub,No Lid Cube,7,0.9,1.17,1.3149,0.4896
-Green Rub,No Lid Cube,8,0.9,1.15,1.3611,0.484
-Green Rub,No Lid Cube,9,0.9,1.15,1.3611,0.484
-Green Rub,No Lid Cube,10,0.9,1.26,1.1338,0.5116
-Green Rub,Blue Cylinder,1,0.9,0.79,2.8842,0.2989
-Green Rub,Blue Cylinder,2,0.9,0.82,2.677,0.324
-Green Rub,Blue Cylinder,3,0.9,0.85,2.4913,0.3466
-Green Rub,Blue Cylinder,4,0.9,0.76,3.1163,0.2706
-Green Rub,Blue Cylinder,5,0.9,0.88,2.3244,0.3669
-Green Rub,Blue Cylinder,6,0.9,0.84,2.551,0.3393
-Green Rub,Blue Cylinder,7,0.9,0.81,2.7435,0.3159
-Green Rub,Blue Cylinder,8,0.9,0.84,2.551,0.3393
-Green Rub,Blue Cylinder,9,0.9,0.82,2.677,0.324
-Green Rub,Blue Cylinder,10,0.9,0.89,2.2724,0.3732
-Green Rub,Colored Cubes,1,0.9,0.87,2.3781,0.3604
-Green Rub,Colored Cubes,2,0.9,0.74,3.2871,0.2499
-Green Rub,Colored Cubes,3,0.9,0.74,3.2871,0.2499
-Green Rub,Colored Cubes,4,0.9,0.74,3.2871,0.2499
-Green Rub,Colored Cubes,5,0.9,0.69,3.7807,0.1899
-Green Rub,Colored Cubes,6,0.9,0.73,3.3777,0.2389
-Green Rub,Colored Cubes,7,0.9,0.7,3.6735,0.2029
-Green Rub,Colored Cubes,8,0.9,0.68,3.8927,0.1763
-Green Rub,Colored Cubes,9,0.9,0.72,3.4722,0.2274
-Green Rub,Colored Cubes,10,0.9,0.74,3.2871,0.2499
-Green Rub,Wooden Cube,1,0.9,0.72,3.4722,0.2274
-Green Rub,Wooden Cube,2,0.9,0.74,3.2871,0.2499
-Green Rub,Wooden Cube,3,0.9,0.77,3.0359,0.2804
-Green Rub,Wooden Cube,4,0.9,0.7,3.6735,0.2029
-Green Rub,Wooden Cube,5,0.9,0.71,3.5707,0.2154
-Green Rub,Wooden Cube,6,0.9,0.74,3.2871,0.2499
-Green Rub,Wooden Cube,7,0.9,0.79,2.8842,0.2989
-Green Rub,Wooden Cube,8,0.9,0.74,3.2871,0.2499
-Green Rub,Wooden Cube,9,0.9,0.76,3.1163,0.2706
-Green Rub,Wooden Cube,10,0.9,0.73,3.3777,0.2389
+Green Rub,No Lid Cube,1,0.75,1.18,1.0773,0.5185
+Green Rub,No Lid Cube,2,0.75,1.09,1.2625,0.496
+Green Rub,No Lid Cube,3,0.75,1.18,1.0773,0.5185
+Green Rub,No Lid Cube,4,0.75,1.13,1.1747,0.5066
+Green Rub,No Lid Cube,5,0.75,1.2,1.0417,0.5228
+Green Rub,No Lid Cube,6,0.75,1.1,1.2397,0.4987
+Green Rub,No Lid Cube,7,0.75,1.17,1.0958,0.5162
+Green Rub,No Lid Cube,8,0.75,1.15,1.1342,0.5115
+Green Rub,No Lid Cube,9,0.75,1.15,1.1342,0.5115
+Green Rub,No Lid Cube,10,0.75,1.26,0.9448,0.5346
+Green Rub,Blue Cylinder,1,0.8,0.79,2.5637,0.3378
+Green Rub,Blue Cylinder,2,0.8,0.82,2.3795,0.3602
+Green Rub,Blue Cylinder,3,0.8,0.85,2.2145,0.3802
+Green Rub,Blue Cylinder,4,0.8,0.76,2.7701,0.3127
+Green Rub,Blue Cylinder,5,0.8,0.88,2.0661,0.3983
+Green Rub,Blue Cylinder,6,0.8,0.84,2.2676,0.3738
+Green Rub,Blue Cylinder,7,0.8,0.81,2.4387,0.353
+Green Rub,Blue Cylinder,8,0.8,0.84,2.2676,0.3738
+Green Rub,Blue Cylinder,9,0.8,0.82,2.3795,0.3602
+Green Rub,Blue Cylinder,10,0.8,0.89,2.0199,0.4039
+Green Rub,Colored Cubes,1,0.78,0.87,2.061,0.3989
+Green Rub,Colored Cubes,2,0.78,0.74,2.8488,0.3031
+Green Rub,Colored Cubes,3,0.78,0.74,2.8488,0.3031
+Green Rub,Colored Cubes,4,0.78,0.74,2.8488,0.3031
+Green Rub,Colored Cubes,5,0.78,0.69,3.2766,0.2511
+Green Rub,Colored Cubes,6,0.78,0.73,2.9274,0.2936
+Green Rub,Colored Cubes,7,0.78,0.7,3.1837,0.2624
+Green Rub,Colored Cubes,8,0.78,0.68,3.3737,0.2393
+Green Rub,Colored Cubes,9,0.78,0.72,3.0093,0.2836
+Green Rub,Colored Cubes,10,0.78,0.74,2.8488,0.3031
+Green Rub,Wooden Cube,1,0.75,0.72,2.8935,0.2977
+Green Rub,Wooden Cube,2,0.75,0.74,2.7392,0.3165
+Green Rub,Wooden Cube,3,0.75,0.77,2.5299,0.3419
+Green Rub,Wooden Cube,4,0.75,0.7,3.0612,0.2773
+Green Rub,Wooden Cube,5,0.75,0.71,2.9756,0.2877
+Green Rub,Wooden Cube,6,0.75,0.74,2.7392,0.3165
+Green Rub,Wooden Cube,7,0.75,0.79,2.4035,0.3573
+Green Rub,Wooden Cube,8,0.75,0.74,2.7392,0.3165
+Green Rub,Wooden Cube,9,0.75,0.76,2.597,0.3338
+Green Rub,Wooden Cube,10,0.75,0.73,2.8148,0.3073
 
 
 --- STATISTICS ---
 Surface,Object,Trials,Avg_mu_k,Std_Dev,Rel_Error_%
-Green Rub,No Lid Cube,10,0.4863,0.0137,2.81
-Green Rub,Blue Cylinder,10,0.3299,0.0306,9.28
-Green Rub,Colored Cubes,10,0.2395,0.0505,21.1
-Green Rub,Wooden Cube,10,0.2484,0.0294,11.82
+Green Rub,No Lid Cube,10,0.5135,0.0114,2.22
+Green Rub,Blue Cylinder,10,0.3654,0.0272,7.45
+Green Rub,Colored Cubes,10,0.2942,0.0438,14.89
+Green Rub,Wooden Cube,10,0.3152,0.0245,7.76
