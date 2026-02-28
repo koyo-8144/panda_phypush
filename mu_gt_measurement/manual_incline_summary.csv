@@ -1,137 +1,137 @@
-Surface,Object,Trial,Distance_m,Time_s,Accel_m_s2,mu_k
-Green Rub,No Lid Cube,1,0.75,1.18,1.0773,0.5185
-Green Rub,No Lid Cube,2,0.75,1.09,1.2625,0.496
-Green Rub,No Lid Cube,3,0.75,1.18,1.0773,0.5185
-Green Rub,No Lid Cube,4,0.75,1.13,1.1747,0.5066
-Green Rub,No Lid Cube,5,0.75,1.2,1.0417,0.5228
-Green Rub,No Lid Cube,6,0.75,1.1,1.2397,0.4987
-Green Rub,No Lid Cube,7,0.75,1.17,1.0958,0.5162
-Green Rub,No Lid Cube,8,0.75,1.15,1.1342,0.5115
-Green Rub,No Lid Cube,9,0.75,1.15,1.1342,0.5115
-Green Rub,No Lid Cube,10,0.75,1.26,0.9448,0.5346
-Green Rub,Blue Cylinder,1,0.8,0.79,2.5637,0.3378
-Green Rub,Blue Cylinder,2,0.8,0.82,2.3795,0.3602
-Green Rub,Blue Cylinder,3,0.8,0.85,2.2145,0.3802
-Green Rub,Blue Cylinder,4,0.8,0.76,2.7701,0.3127
-Green Rub,Blue Cylinder,5,0.8,0.88,2.0661,0.3983
-Green Rub,Blue Cylinder,6,0.8,0.84,2.2676,0.3738
-Green Rub,Blue Cylinder,7,0.8,0.81,2.4387,0.353
-Green Rub,Blue Cylinder,8,0.8,0.84,2.2676,0.3738
-Green Rub,Blue Cylinder,9,0.8,0.82,2.3795,0.3602
-Green Rub,Blue Cylinder,10,0.8,0.89,2.0199,0.4039
-Green Rub,Colored Cubes,1,0.77,0.87,2.0346,0.4021
-Green Rub,Colored Cubes,2,0.77,0.74,2.8123,0.3076
-Green Rub,Colored Cubes,3,0.77,0.74,2.8123,0.3076
-Green Rub,Colored Cubes,4,0.77,0.74,2.8123,0.3076
-Green Rub,Colored Cubes,5,0.77,0.69,3.2346,0.2563
-Green Rub,Colored Cubes,6,0.77,0.73,2.8898,0.2982
-Green Rub,Colored Cubes,7,0.77,0.7,3.1429,0.2674
-Green Rub,Colored Cubes,8,0.77,0.68,3.3304,0.2446
-Green Rub,Colored Cubes,9,0.77,0.72,2.9707,0.2883
-Green Rub,Colored Cubes,10,0.77,0.74,2.8123,0.3076
-Green Rub,Wooden Cube,1,0.761,0.72,2.936,0.2926
-Green Rub,Wooden Cube,2,0.761,0.74,2.7794,0.3116
-Green Rub,Wooden Cube,3,0.761,0.77,2.567,0.3374
-Green Rub,Wooden Cube,4,0.761,0.7,3.1061,0.2719
-Green Rub,Wooden Cube,5,0.761,0.71,3.0192,0.2824
-Green Rub,Wooden Cube,6,0.761,0.74,2.7794,0.3116
-Green Rub,Wooden Cube,7,0.761,0.79,2.4387,0.353
-Green Rub,Wooden Cube,8,0.761,0.74,2.7794,0.3116
-Green Rub,Wooden Cube,9,0.761,0.76,2.635,0.3291
-Green Rub,Wooden Cube,10,0.761,0.73,2.8561,0.3023
-Wood Smooth,No Lid Cube,1,1.07,0.94,2.4219,0.355
-Wood Smooth,No Lid Cube,2,1.07,0.97,2.2744,0.373
-Wood Smooth,No Lid Cube,3,1.07,0.84,3.0329,0.2808
-Wood Smooth,No Lid Cube,4,1.07,0.95,2.3712,0.3612
-Wood Smooth,No Lid Cube,5,1.07,0.85,2.9619,0.2894
-Wood Smooth,No Lid Cube,6,1.07,0.95,2.3712,0.3612
-Wood Smooth,No Lid Cube,7,1.07,0.88,2.7634,0.3135
-Wood Smooth,No Lid Cube,8,1.07,0.96,2.322,0.3672
-Wood Smooth,No Lid Cube,9,1.07,0.87,2.8273,0.3058
-Wood Smooth,No Lid Cube,10,1.07,1.05,1.941,0.4135
-Wood Smooth,Blue Cylinder,1,1.12,0.83,3.2516,0.2542
-Wood Smooth,Blue Cylinder,2,1.12,0.79,3.5892,0.2132
-Wood Smooth,Blue Cylinder,3,1.12,0.82,3.3314,0.2445
-Wood Smooth,Blue Cylinder,4,1.12,0.86,3.0287,0.2813
-Wood Smooth,Blue Cylinder,5,1.12,0.8,3.5,0.224
-Wood Smooth,Blue Cylinder,6,1.12,0.87,2.9594,0.2897
-Wood Smooth,Blue Cylinder,7,1.12,0.86,3.0287,0.2813
-Wood Smooth,Blue Cylinder,8,1.12,0.86,3.0287,0.2813
-Wood Smooth,Blue Cylinder,9,1.12,0.9,2.7654,0.3133
-Wood Smooth,Blue Cylinder,10,1.12,0.94,2.5351,0.3413
-Wood Smooth,Colored Cubes,1,1.09,0.76,3.7742,0.1907
-Wood Smooth,Colored Cubes,2,1.09,0.71,4.3245,0.1238
-Wood Smooth,Colored Cubes,3,1.09,0.74,3.981,0.1655
-Wood Smooth,Colored Cubes,4,1.09,0.74,3.981,0.1655
-Wood Smooth,Colored Cubes,5,1.09,0.71,4.3245,0.1238
-Wood Smooth,Colored Cubes,6,1.09,0.72,4.2052,0.1383
-Wood Smooth,Colored Cubes,7,1.09,0.76,3.7742,0.1907
-Wood Smooth,Colored Cubes,8,1.09,0.72,4.2052,0.1383
-Wood Smooth,Colored Cubes,9,1.09,0.74,3.981,0.1655
-Wood Smooth,Colored Cubes,10,1.09,0.75,3.8756,0.1784
-Wood Smooth,Wooden Cube,1,1.081,0.79,3.4642,0.2284
-Wood Smooth,Wooden Cube,2,1.081,0.75,3.8436,0.1822
-Wood Smooth,Wooden Cube,3,1.081,0.78,3.5536,0.2175
-Wood Smooth,Wooden Cube,4,1.081,0.8,3.3781,0.2388
-Wood Smooth,Wooden Cube,5,1.081,0.7,4.4122,0.1131
-Wood Smooth,Wooden Cube,6,1.081,0.69,4.5411,0.0975
-Wood Smooth,Wooden Cube,7,1.081,0.77,3.6465,0.2062
-Wood Smooth,Wooden Cube,8,1.081,0.77,3.6465,0.2062
-Wood Smooth,Wooden Cube,9,1.081,0.73,4.057,0.1563
-Wood Smooth,Wooden Cube,10,1.081,0.73,4.057,0.1563
-Wood Rough,No Lid Cube,1,1.07,0.82,3.1826,0.2626
-Wood Rough,No Lid Cube,2,1.07,0.83,3.1064,0.2718
-Wood Rough,No Lid Cube,3,1.07,0.8,3.3437,0.243
-Wood Rough,No Lid Cube,4,1.07,0.83,3.1064,0.2718
-Wood Rough,No Lid Cube,5,1.07,0.77,3.6094,0.2107
-Wood Rough,No Lid Cube,6,1.07,0.83,3.1064,0.2718
-Wood Rough,No Lid Cube,7,1.07,0.87,2.8273,0.3058
-Wood Rough,No Lid Cube,8,1.07,0.84,3.0329,0.2808
-Wood Rough,No Lid Cube,9,1.07,0.79,3.4289,0.2326
-Wood Rough,No Lid Cube,10,1.07,0.76,3.705,0.1991
-Wood Rough,Blue Cylinder,1,1.12,0.81,3.4141,0.2344
-Wood Rough,Blue Cylinder,2,1.12,0.87,2.9594,0.2897
-Wood Rough,Blue Cylinder,3,1.12,0.84,3.1746,0.2635
-Wood Rough,Blue Cylinder,4,1.12,1.01,2.1959,0.3825
-Wood Rough,Blue Cylinder,5,1.12,1.06,1.9936,0.4071
-Wood Rough,Blue Cylinder,6,1.12,0.92,2.6465,0.3277
-Wood Rough,Blue Cylinder,7,1.12,0.99,2.2855,0.3716
-Wood Rough,Blue Cylinder,8,1.12,1.15,1.6938,0.4435
-Wood Rough,Blue Cylinder,9,1.12,1.4,1.1429,0.5105
-Wood Rough,Blue Cylinder,10,1.12,1.43,1.0954,0.5163
-Wood Rough,Colored Cubes,1,1.09,0.75,3.8756,0.1784
-Wood Rough,Colored Cubes,2,1.09,0.76,3.7742,0.1907
-Wood Rough,Colored Cubes,3,1.09,0.74,3.981,0.1655
-Wood Rough,Colored Cubes,4,1.09,0.77,3.6768,0.2025
-Wood Rough,Colored Cubes,5,1.09,0.75,3.8756,0.1784
-Wood Rough,Colored Cubes,6,1.09,0.72,4.2052,0.1383
-Wood Rough,Colored Cubes,7,1.09,0.76,3.7742,0.1907
-Wood Rough,Colored Cubes,8,1.09,0.72,4.2052,0.1383
-Wood Rough,Colored Cubes,9,1.09,0.77,3.6768,0.2025
-Wood Rough,Colored Cubes,10,1.09,0.78,3.5832,0.2139
-Wood Rough,Wooden Cube,1,1.081,0.79,3.4642,0.2284
-Wood Rough,Wooden Cube,2,1.081,0.77,3.6465,0.2062
-Wood Rough,Wooden Cube,3,1.081,0.78,3.5536,0.2175
-Wood Rough,Wooden Cube,4,1.081,0.71,4.2888,0.1281
-Wood Rough,Wooden Cube,5,1.081,0.74,3.9481,0.1695
-Wood Rough,Wooden Cube,6,1.081,0.75,3.8436,0.1822
-Wood Rough,Wooden Cube,7,1.081,0.71,4.2888,0.1281
-Wood Rough,Wooden Cube,8,1.081,0.75,3.8436,0.1822
-Wood Rough,Wooden Cube,9,1.081,0.68,4.6756,0.0811
-Wood Rough,Wooden Cube,10,1.081,0.69,4.5411,0.0975
+Surface,Object,Trial,Angle,Distance_m,Time_s,Accel_m_s2,mu_k
+Green Rub,No Lid Cube,1,31.5,0.75,1.01,1.4704,0.437
+Green Rub,No Lid Cube,2,31.5,0.75,1.18,1.0773,0.484
+Green Rub,No Lid Cube,3,31.5,0.75,1.04,1.3868,0.447
+Green Rub,No Lid Cube,4,31.5,0.75,1.05,1.3605,0.4501
+Green Rub,No Lid Cube,5,31.5,0.75,1.0,1.5,0.4335
+Green Rub,No Lid Cube,6,31.5,0.75,0.98,1.5618,0.4261
+Green Rub,No Lid Cube,7,31.5,0.75,0.97,1.5942,0.4222
+Green Rub,No Lid Cube,8,31.5,0.75,1.0,1.5,0.4335
+Green Rub,No Lid Cube,9,31.5,0.75,0.95,1.662,0.4141
+Green Rub,No Lid Cube,10,31.5,0.75,0.89,1.8937,0.3864
+Green Rub,Blue Cylinder,1,33.0,0.8,0.79,2.5637,0.3378
+Green Rub,Blue Cylinder,2,33.0,0.8,0.82,2.3795,0.3602
+Green Rub,Blue Cylinder,3,33.0,0.8,0.85,2.2145,0.3802
+Green Rub,Blue Cylinder,4,33.0,0.8,0.76,2.7701,0.3127
+Green Rub,Blue Cylinder,5,33.0,0.8,0.88,2.0661,0.3983
+Green Rub,Blue Cylinder,6,33.0,0.8,0.84,2.2676,0.3738
+Green Rub,Blue Cylinder,7,33.0,0.8,0.81,2.4387,0.353
+Green Rub,Blue Cylinder,8,33.0,0.8,0.84,2.2676,0.3738
+Green Rub,Blue Cylinder,9,33.0,0.8,0.82,2.3795,0.3602
+Green Rub,Blue Cylinder,10,33.0,0.8,0.89,2.0199,0.4039
+Green Rub,Colored Cubes,1,33.0,0.77,0.87,2.0346,0.4021
+Green Rub,Colored Cubes,2,33.0,0.77,0.74,2.8123,0.3076
+Green Rub,Colored Cubes,3,33.0,0.77,0.74,2.8123,0.3076
+Green Rub,Colored Cubes,4,33.0,0.77,0.74,2.8123,0.3076
+Green Rub,Colored Cubes,5,33.0,0.77,0.69,3.2346,0.2563
+Green Rub,Colored Cubes,6,33.0,0.77,0.73,2.8898,0.2982
+Green Rub,Colored Cubes,7,33.0,0.77,0.7,3.1429,0.2674
+Green Rub,Colored Cubes,8,33.0,0.77,0.68,3.3304,0.2446
+Green Rub,Colored Cubes,9,33.0,0.77,0.72,2.9707,0.2883
+Green Rub,Colored Cubes,10,33.0,0.77,0.74,2.8123,0.3076
+Green Rub,Wooden Cube,1,33.0,0.761,0.72,2.936,0.2926
+Green Rub,Wooden Cube,2,33.0,0.761,0.74,2.7794,0.3116
+Green Rub,Wooden Cube,3,33.0,0.761,0.77,2.567,0.3374
+Green Rub,Wooden Cube,4,33.0,0.761,0.7,3.1061,0.2719
+Green Rub,Wooden Cube,5,33.0,0.761,0.71,3.0192,0.2824
+Green Rub,Wooden Cube,6,33.0,0.761,0.74,2.7794,0.3116
+Green Rub,Wooden Cube,7,33.0,0.761,0.79,2.4387,0.353
+Green Rub,Wooden Cube,8,33.0,0.761,0.74,2.7794,0.3116
+Green Rub,Wooden Cube,9,33.0,0.761,0.76,2.635,0.3291
+Green Rub,Wooden Cube,10,33.0,0.761,0.73,2.8561,0.3023
+Wood Smooth,No Lid Cube,1,33.0,1.07,0.94,2.4219,0.355
+Wood Smooth,No Lid Cube,2,33.0,1.07,0.97,2.2744,0.373
+Wood Smooth,No Lid Cube,3,33.0,1.07,0.84,3.0329,0.2808
+Wood Smooth,No Lid Cube,4,33.0,1.07,0.95,2.3712,0.3612
+Wood Smooth,No Lid Cube,5,33.0,1.07,0.85,2.9619,0.2894
+Wood Smooth,No Lid Cube,6,33.0,1.07,0.95,2.3712,0.3612
+Wood Smooth,No Lid Cube,7,33.0,1.07,0.88,2.7634,0.3135
+Wood Smooth,No Lid Cube,8,33.0,1.07,0.96,2.322,0.3672
+Wood Smooth,No Lid Cube,9,33.0,1.07,0.87,2.8273,0.3058
+Wood Smooth,No Lid Cube,10,33.0,1.07,1.05,1.941,0.4135
+Wood Smooth,Blue Cylinder,1,33.0,1.12,0.83,3.2516,0.2542
+Wood Smooth,Blue Cylinder,2,33.0,1.12,0.79,3.5892,0.2132
+Wood Smooth,Blue Cylinder,3,33.0,1.12,0.82,3.3314,0.2445
+Wood Smooth,Blue Cylinder,4,33.0,1.12,0.86,3.0287,0.2813
+Wood Smooth,Blue Cylinder,5,33.0,1.12,0.8,3.5,0.224
+Wood Smooth,Blue Cylinder,6,33.0,1.12,0.87,2.9594,0.2897
+Wood Smooth,Blue Cylinder,7,33.0,1.12,0.86,3.0287,0.2813
+Wood Smooth,Blue Cylinder,8,33.0,1.12,0.86,3.0287,0.2813
+Wood Smooth,Blue Cylinder,9,33.0,1.12,0.9,2.7654,0.3133
+Wood Smooth,Blue Cylinder,10,33.0,1.12,0.94,2.5351,0.3413
+Wood Smooth,Colored Cubes,1,33.0,1.09,0.76,3.7742,0.1907
+Wood Smooth,Colored Cubes,2,33.0,1.09,0.71,4.3245,0.1238
+Wood Smooth,Colored Cubes,3,33.0,1.09,0.74,3.981,0.1655
+Wood Smooth,Colored Cubes,4,33.0,1.09,0.74,3.981,0.1655
+Wood Smooth,Colored Cubes,5,33.0,1.09,0.71,4.3245,0.1238
+Wood Smooth,Colored Cubes,6,33.0,1.09,0.72,4.2052,0.1383
+Wood Smooth,Colored Cubes,7,33.0,1.09,0.76,3.7742,0.1907
+Wood Smooth,Colored Cubes,8,33.0,1.09,0.72,4.2052,0.1383
+Wood Smooth,Colored Cubes,9,33.0,1.09,0.74,3.981,0.1655
+Wood Smooth,Colored Cubes,10,33.0,1.09,0.75,3.8756,0.1784
+Wood Smooth,Wooden Cube,1,33.0,1.081,0.79,3.4642,0.2284
+Wood Smooth,Wooden Cube,2,33.0,1.081,0.75,3.8436,0.1822
+Wood Smooth,Wooden Cube,3,33.0,1.081,0.78,3.5536,0.2175
+Wood Smooth,Wooden Cube,4,33.0,1.081,0.8,3.3781,0.2388
+Wood Smooth,Wooden Cube,5,33.0,1.081,0.7,4.4122,0.1131
+Wood Smooth,Wooden Cube,6,33.0,1.081,0.69,4.5411,0.0975
+Wood Smooth,Wooden Cube,7,33.0,1.081,0.77,3.6465,0.2062
+Wood Smooth,Wooden Cube,8,33.0,1.081,0.77,3.6465,0.2062
+Wood Smooth,Wooden Cube,9,33.0,1.081,0.73,4.057,0.1563
+Wood Smooth,Wooden Cube,10,33.0,1.081,0.73,4.057,0.1563
+Wood Rough,No Lid Cube,1,33.0,1.07,0.82,3.1826,0.2626
+Wood Rough,No Lid Cube,2,33.0,1.07,0.83,3.1064,0.2718
+Wood Rough,No Lid Cube,3,33.0,1.07,0.8,3.3437,0.243
+Wood Rough,No Lid Cube,4,33.0,1.07,0.83,3.1064,0.2718
+Wood Rough,No Lid Cube,5,33.0,1.07,0.77,3.6094,0.2107
+Wood Rough,No Lid Cube,6,33.0,1.07,0.83,3.1064,0.2718
+Wood Rough,No Lid Cube,7,33.0,1.07,0.87,2.8273,0.3058
+Wood Rough,No Lid Cube,8,33.0,1.07,0.84,3.0329,0.2808
+Wood Rough,No Lid Cube,9,33.0,1.07,0.79,3.4289,0.2326
+Wood Rough,No Lid Cube,10,33.0,1.07,0.76,3.705,0.1991
+Wood Rough,Blue Cylinder,1,33.0,1.12,0.81,3.4141,0.2344
+Wood Rough,Blue Cylinder,2,33.0,1.12,0.87,2.9594,0.2897
+Wood Rough,Blue Cylinder,3,33.0,1.12,0.84,3.1746,0.2635
+Wood Rough,Blue Cylinder,4,33.0,1.12,1.01,2.1959,0.3825
+Wood Rough,Blue Cylinder,5,33.0,1.12,1.06,1.9936,0.4071
+Wood Rough,Blue Cylinder,6,33.0,1.12,0.92,2.6465,0.3277
+Wood Rough,Blue Cylinder,7,33.0,1.12,0.99,2.2855,0.3716
+Wood Rough,Blue Cylinder,8,33.0,1.12,1.15,1.6938,0.4435
+Wood Rough,Blue Cylinder,9,33.0,1.12,1.4,1.1429,0.5105
+Wood Rough,Blue Cylinder,10,33.0,1.12,1.43,1.0954,0.5163
+Wood Rough,Colored Cubes,1,33.0,1.09,0.75,3.8756,0.1784
+Wood Rough,Colored Cubes,2,33.0,1.09,0.76,3.7742,0.1907
+Wood Rough,Colored Cubes,3,33.0,1.09,0.74,3.981,0.1655
+Wood Rough,Colored Cubes,4,33.0,1.09,0.77,3.6768,0.2025
+Wood Rough,Colored Cubes,5,33.0,1.09,0.75,3.8756,0.1784
+Wood Rough,Colored Cubes,6,33.0,1.09,0.72,4.2052,0.1383
+Wood Rough,Colored Cubes,7,33.0,1.09,0.76,3.7742,0.1907
+Wood Rough,Colored Cubes,8,33.0,1.09,0.72,4.2052,0.1383
+Wood Rough,Colored Cubes,9,33.0,1.09,0.77,3.6768,0.2025
+Wood Rough,Colored Cubes,10,33.0,1.09,0.78,3.5832,0.2139
+Wood Rough,Wooden Cube,1,33.0,1.081,0.79,3.4642,0.2284
+Wood Rough,Wooden Cube,2,33.0,1.081,0.77,3.6465,0.2062
+Wood Rough,Wooden Cube,3,33.0,1.081,0.78,3.5536,0.2175
+Wood Rough,Wooden Cube,4,33.0,1.081,0.71,4.2888,0.1281
+Wood Rough,Wooden Cube,5,33.0,1.081,0.74,3.9481,0.1695
+Wood Rough,Wooden Cube,6,33.0,1.081,0.75,3.8436,0.1822
+Wood Rough,Wooden Cube,7,33.0,1.081,0.71,4.2888,0.1281
+Wood Rough,Wooden Cube,8,33.0,1.081,0.75,3.8436,0.1822
+Wood Rough,Wooden Cube,9,33.0,1.081,0.68,4.6756,0.0811
+Wood Rough,Wooden Cube,10,33.0,1.081,0.69,4.5411,0.0975
 
 
 --- STATISTICS ---
-Surface,Object,Trials,Avg_mu_k,Std_Dev,Rel_Error_%
-Green Rub,No Lid Cube,10,0.5135,0.0114,2.22
-Green Rub,Blue Cylinder,10,0.3654,0.0272,7.45
-Green Rub,Colored Cubes,10,0.2987,0.0432,14.47
-Green Rub,Wooden Cube,10,0.3103,0.0248,8.0
-Wood Smooth,No Lid Cube,10,0.3421,0.0425,12.42
-Wood Smooth,Blue Cylinder,10,0.2724,0.0393,14.43
-Wood Smooth,Colored Cubes,10,0.158,0.0255,16.12
-Wood Smooth,Wooden Cube,10,0.1802,0.0483,26.79
-Wood Rough,No Lid Cube,10,0.255,0.0331,12.99
-Wood Rough,Blue Cylinder,10,0.3747,0.0976,26.06
-Wood Rough,Colored Cubes,10,0.1799,0.026,14.45
-Wood Rough,Wooden Cube,10,0.1621,0.0509,31.4
+Surface,Object,Angle,Trials,Avg_mu_k,Std_Dev,Rel_Error_%
+Green Rub,No Lid Cube,31.5,10,0.4334,0.0254,5.86
+Green Rub,Blue Cylinder,33.0,10,0.3654,0.0272,7.45
+Green Rub,Colored Cubes,33.0,10,0.2987,0.0432,14.47
+Green Rub,Wooden Cube,33.0,10,0.3103,0.0248,8.0
+Wood Smooth,No Lid Cube,33.0,10,0.3421,0.0425,12.42
+Wood Smooth,Blue Cylinder,33.0,10,0.2724,0.0393,14.43
+Wood Smooth,Colored Cubes,33.0,10,0.158,0.0255,16.12
+Wood Smooth,Wooden Cube,33.0,10,0.1802,0.0483,26.79
+Wood Rough,No Lid Cube,33.0,10,0.255,0.0331,12.99
+Wood Rough,Blue Cylinder,33.0,10,0.3747,0.0976,26.06
+Wood Rough,Colored Cubes,33.0,10,0.1799,0.026,14.45
+Wood Rough,Wooden Cube,33.0,10,0.1621,0.0509,31.4
