@@ -6,7 +6,7 @@ import math
 G = 9.81
 THETA_DEGREES = 33.0  # Your measured ramp angle
 THETA_SPECIAL = 31.5
-THETA_SPECIAL_v2 = 30.6
+THETA_SPECIAL_V2 = 30.6
 
 NO_LID_CUBE_LEN = 0.15
 BLUE_CYLINDER_LEN = 0.1
@@ -74,16 +74,16 @@ MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB = [
 ]
 
 MANUAL_TIMES_WOODEN_CUBE_EVEN_GREEN_RUB = [
--,
--,
--,
--,
--,
--,
--,
--,
--,
--,
+26.70-25.52,
+49.51-48.28,
+2.53-1.36,
+17.13-15.98,
+30.88-29.65,
+44.20-43.03,
+59.54-58.34,
+13.06-11.80,
+28.86-27.59,
+12.27-11.25,
 ]
 
 # ---------- WOOD SMOOTH ----------
@@ -140,16 +140,16 @@ MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH = [
 ]
 
 MANUAL_TIMES_WOODEN_CUBE_EVEN_WOOD_SMOOTH = [
--,
--,
--,
--,
--,
--,
--,
--,
--,
--,
+16.01-15.05,
+30.75-29.82,
+45.39-44.55,
+1.97-1.10,
+16.95-16.07,
+42.93-42.05,
+56.73-55.84,
+14.74-13.85,
+46.11-45.11,
+1.61-0.65,
 ]
 
 
@@ -207,16 +207,16 @@ MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH = [
 ]
 
 MANUAL_TIMES_WOODEN_CUBE_EVEN_WOOD_ROUGH = [
--,
--,
--,
--,
--,
--,
--,
--,
--,
--,
+34.97-34.17,
+50.04-49.23,
+6.68-5.90,
+13.96-13.17,
+27.56-26.78,
+44.89-44.11,
+1.71-0.9,
+20.74-19.96,
+36.18-35.38,
+0.84-0.06,
 ]
 
 
@@ -232,18 +232,21 @@ def main():
         {"surface": "Green Rub", "object": "Blue Cylinder", "angle": THETA_DEGREES, "dist": dist_gr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_GREEN_RUB},
         {"surface": "Green Rub", "object": "Colored Cubes", "angle": THETA_DEGREES, "dist": dist_gr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_GREEN_RUB},
         {"surface": "Green Rub", "object": "Wooden Cube", "angle": THETA_DEGREES, "dist": dist_gr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB},
+        {"surface": "Green Rub", "object": "Wooden Cube Even", "angle": THETA_SPECIAL_V2, "dist": dist_gr - WOODEN_CUBE_EVEN_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_EVEN_GREEN_RUB},
         
         # WOOD SMOOTH
         {"surface": "Wood Smooth", "object": "No Lid Cube", "angle": THETA_DEGREES, "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH},
         {"surface": "Wood Smooth", "object": "Blue Cylinder", "angle": THETA_DEGREES, "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_SMOOTH},
         {"surface": "Wood Smooth", "object": "Colored Cubes", "angle": THETA_DEGREES, "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_SMOOTH},
         {"surface": "Wood Smooth", "object": "Wooden Cube", "angle": THETA_DEGREES, "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH},
-        
+        {"surface": "Wood Smooth", "object": "Wooden Cube Even", "angle": THETA_SPECIAL_V2, "dist": dist_wsr - WOODEN_CUBE_EVEN_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_EVEN_WOOD_SMOOTH},
+
         # WOOD ROUGH
         {"surface": "Wood Rough", "object": "No Lid Cube", "angle": THETA_DEGREES, "dist": dist_wsr - NO_LID_CUBE_LEN, "times": MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH},
         {"surface": "Wood Rough", "object": "Blue Cylinder", "angle": THETA_DEGREES, "dist": dist_wsr - BLUE_CYLINDER_LEN, "times": MANUAL_TIMES_BLUE_CYLINDER_WOOD_ROUGH},
         {"surface": "Wood Rough", "object": "Colored Cubes", "angle": THETA_DEGREES, "dist": dist_wsr - COLORED_CUBES_LEN, "times": MANUAL_TIMES_COLORED_CUBES_WOOD_ROUGH},
         {"surface": "Wood Rough", "object": "Wooden Cube", "angle": THETA_DEGREES, "dist": dist_wsr - WOODEN_CUBE_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH},
+        {"surface": "Wood Rough", "object": "Wooden Cube Even", "angle": THETA_SPECIAL_V2, "dist": dist_wsr - WOODEN_CUBE_EVEN_LEN, "times": MANUAL_TIMES_WOODEN_CUBE_EVEN_WOOD_ROUGH},
     ]
 
     all_results = []

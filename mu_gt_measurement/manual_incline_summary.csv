@@ -39,6 +39,16 @@ Green Rub,Wooden Cube,7,33.0,0.761,0.79,2.4387,0.353
 Green Rub,Wooden Cube,8,33.0,0.761,0.74,2.7794,0.3116
 Green Rub,Wooden Cube,9,33.0,0.761,0.76,2.635,0.3291
 Green Rub,Wooden Cube,10,33.0,0.761,0.73,2.8561,0.3023
+Green Rub,Wooden Cube Even,1,30.6,0.759,1.18,1.0902,0.4623
+Green Rub,Wooden Cube Even,2,30.6,0.759,1.23,1.0034,0.4726
+Green Rub,Wooden Cube Even,3,30.6,0.759,1.17,1.1089,0.4601
+Green Rub,Wooden Cube Even,4,30.6,0.759,1.15,1.1478,0.4555
+Green Rub,Wooden Cube Even,5,30.6,0.759,1.23,1.0034,0.4726
+Green Rub,Wooden Cube Even,6,30.6,0.759,1.17,1.1089,0.4601
+Green Rub,Wooden Cube Even,7,30.6,0.759,1.2,1.0542,0.4666
+Green Rub,Wooden Cube Even,8,30.6,0.759,1.26,0.9562,0.4782
+Green Rub,Wooden Cube Even,9,30.6,0.759,1.27,0.9412,0.4799
+Green Rub,Wooden Cube Even,10,30.6,0.759,1.02,1.4591,0.4186
 Wood Smooth,No Lid Cube,1,33.0,1.07,0.94,2.4219,0.355
 Wood Smooth,No Lid Cube,2,33.0,1.07,0.97,2.2744,0.373
 Wood Smooth,No Lid Cube,3,33.0,1.07,0.84,3.0329,0.2808
@@ -79,6 +89,16 @@ Wood Smooth,Wooden Cube,7,33.0,1.081,0.77,3.6465,0.2062
 Wood Smooth,Wooden Cube,8,33.0,1.081,0.77,3.6465,0.2062
 Wood Smooth,Wooden Cube,9,33.0,1.081,0.73,4.057,0.1563
 Wood Smooth,Wooden Cube,10,33.0,1.081,0.73,4.057,0.1563
+Wood Smooth,Wooden Cube Even,1,30.6,1.079,0.96,2.3416,0.3141
+Wood Smooth,Wooden Cube Even,2,30.6,1.079,0.93,2.4951,0.2959
+Wood Smooth,Wooden Cube Even,3,30.6,1.079,0.84,3.0584,0.2292
+Wood Smooth,Wooden Cube Even,4,30.6,1.079,0.87,2.8511,0.2537
+Wood Smooth,Wooden Cube Even,5,30.6,1.079,0.88,2.7867,0.2614
+Wood Smooth,Wooden Cube Even,6,30.6,1.079,0.88,2.7867,0.2614
+Wood Smooth,Wooden Cube Even,7,30.6,1.079,0.89,2.7244,0.2688
+Wood Smooth,Wooden Cube Even,8,30.6,1.079,0.89,2.7244,0.2688
+Wood Smooth,Wooden Cube Even,9,30.6,1.079,1.0,2.158,0.3358
+Wood Smooth,Wooden Cube Even,10,30.6,1.079,0.96,2.3416,0.3141
 Wood Rough,No Lid Cube,1,33.0,1.07,0.82,3.1826,0.2626
 Wood Rough,No Lid Cube,2,33.0,1.07,0.83,3.1064,0.2718
 Wood Rough,No Lid Cube,3,33.0,1.07,0.8,3.3437,0.243
@@ -119,6 +139,16 @@ Wood Rough,Wooden Cube,7,33.0,1.081,0.71,4.2888,0.1281
 Wood Rough,Wooden Cube,8,33.0,1.081,0.75,3.8436,0.1822
 Wood Rough,Wooden Cube,9,33.0,1.081,0.68,4.6756,0.0811
 Wood Rough,Wooden Cube,10,33.0,1.081,0.69,4.5411,0.0975
+Wood Rough,Wooden Cube Even,1,30.6,1.079,0.8,3.3719,0.1921
+Wood Rough,Wooden Cube Even,2,30.6,1.079,0.81,3.2891,0.2019
+Wood Rough,Wooden Cube Even,3,30.6,1.079,0.78,3.547,0.1713
+Wood Rough,Wooden Cube Even,4,30.6,1.079,0.79,3.4578,0.1819
+Wood Rough,Wooden Cube Even,5,30.6,1.079,0.78,3.547,0.1713
+Wood Rough,Wooden Cube Even,6,30.6,1.079,0.78,3.547,0.1713
+Wood Rough,Wooden Cube Even,7,30.6,1.079,0.81,3.2891,0.2019
+Wood Rough,Wooden Cube Even,8,30.6,1.079,0.78,3.547,0.1713
+Wood Rough,Wooden Cube Even,9,30.6,1.079,0.8,3.3719,0.1921
+Wood Rough,Wooden Cube Even,10,30.6,1.079,0.78,3.547,0.1713
 
 
 --- STATISTICS ---
@@ -127,11 +157,14 @@ Green Rub,No Lid Cube,31.5,10,0.4334,0.0254,5.86
 Green Rub,Blue Cylinder,33.0,10,0.3654,0.0272,7.45
 Green Rub,Colored Cubes,33.0,10,0.2987,0.0432,14.47
 Green Rub,Wooden Cube,33.0,10,0.3103,0.0248,8.0
+Green Rub,Wooden Cube Even,30.6,10,0.4626,0.0175,3.78
 Wood Smooth,No Lid Cube,33.0,10,0.3421,0.0425,12.42
 Wood Smooth,Blue Cylinder,33.0,10,0.2724,0.0393,14.43
 Wood Smooth,Colored Cubes,33.0,10,0.158,0.0255,16.12
 Wood Smooth,Wooden Cube,33.0,10,0.1802,0.0483,26.79
+Wood Smooth,Wooden Cube Even,30.6,10,0.2803,0.0332,11.84
 Wood Rough,No Lid Cube,33.0,10,0.255,0.0331,12.99
 Wood Rough,Blue Cylinder,33.0,10,0.3747,0.0976,26.06
 Wood Rough,Colored Cubes,33.0,10,0.1799,0.026,14.45
 Wood Rough,Wooden Cube,33.0,10,0.1621,0.0509,31.4
+Wood Rough,Wooden Cube Even,30.6,10,0.1826,0.0132,7.2
