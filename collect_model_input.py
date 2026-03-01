@@ -229,6 +229,8 @@ def run_push_and_collect(run_id="manual", m_gt="None", mu_gt="None", obj_name="u
             gripper.move(width=0.06, speed=0.1)
         elif "blue_cylinder" in obj_name:
             gripper.move(width=0.06, speed=0.1)
+        elif "wooden_cube_even" in obj_name:
+            gripper.move(width=0.06, speed=0.1)
         else:
             state = gripper.read_once()
             gripper.move(width=state.max_width, speed=0.1)
