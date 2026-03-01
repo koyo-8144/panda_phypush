@@ -6,11 +6,13 @@ import math
 G = 9.81
 THETA_DEGREES = 33.0  # Your measured ramp angle
 THETA_SPECIAL = 31.5
+THETA_SPECIAL_v2 = 30.6
 
 NO_LID_CUBE_LEN = 0.15
 BLUE_CYLINDER_LEN = 0.1
 COLORED_CUBES_LEN = 0.13
 WOODEN_CUBE_LEN = 0.139
+WOODEN_CUBE_EVEN_LEN = 0.141
 
 DISTANCE_M_GREEN_RUB = 0.90 # top to bottom (0.9 meters)
 DISTANCE_M_WOOD_SMOOTH_ROUGH = 1.22  # top to bottom (1.22 meters)
@@ -71,6 +73,19 @@ MANUAL_TIMES_WOODEN_CUBE_GREEN_RUB = [
 0.88-0.15,
 ]
 
+MANUAL_TIMES_WOODEN_CUBE_EVEN_GREEN_RUB = [
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+]
+
 # ---------- WOOD SMOOTH ----------
 MANUAL_TIMES_NO_LID_CUBE_WOOD_SMOOTH = [
 27.80-26.86,
@@ -124,6 +139,20 @@ MANUAL_TIMES_WOODEN_CUBE_WOOD_SMOOTH = [
 26.56-25.83,
 ]
 
+MANUAL_TIMES_WOODEN_CUBE_EVEN_WOOD_SMOOTH = [
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+]
+
+
 # ---------- WOOD ROUGH ----------
 MANUAL_TIMES_NO_LID_CUBE_WOOD_ROUGH = [
 10.24-9.42,
@@ -176,6 +205,20 @@ MANUAL_TIMES_WOODEN_CUBE_WOOD_ROUGH = [
 37.54-36.86,
 43.70-43.01,
 ]
+
+MANUAL_TIMES_WOODEN_CUBE_EVEN_WOOD_ROUGH = [
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+-,
+]
+
 
 
 def main():
