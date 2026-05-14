@@ -73,3 +73,4 @@ PUSHSET_POSE = PUSHSET_POSE_V1
 USE_IK = 0
 
 HOSTNAME = hostname_vincent
+# HOSTNAME = hostname_bob

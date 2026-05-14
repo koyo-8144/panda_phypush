@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import panda_py
 from panda_py import libfranka, controllers
 from pathlib import Path
-from const import PUSHSET_POSE, PUSHSET_Q, HOSTNAME
+from phypush_const import PUSHSET_POSE, PUSHSET_Q, HOSTNAME
 
 # ==========================================
 # 1. CONFIGURATION
@@ -299,6 +299,8 @@ def run_push_and_collect(run_id="manual", m_gt="None", mu_gt="None", obj_name="u
                 
                 history_vel.append(vel_w_smoothed)
                 history_acc.append(acc_w)
+        
+        panda.move_to_start()
                 
         # Final cleanup
         panda.stop_controller()

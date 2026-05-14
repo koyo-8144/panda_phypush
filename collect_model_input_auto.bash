@@ -1,10 +1,14 @@
 #!/bin/bash
 
 # --- 0. EXPERIMENT SETTINGS ---
-OBJECT="wooden_cube_even_0.348" # "nolid_cube_1.856"  # "blue_cylinder_0.175" #"colored_cubes_0.989"
-SURFACE="wood_smooth" #"green_rub" #"wood_smooth" # "wood_rough" 
-NUM_RUNS=10
+# OBJECT="wooden_cube_even_0.348" # "nolid_cube_1.856"  # "blue_cylinder_0.175" #"colored_cubes_0.989"
+# SURFACE="wood_smooth" #"green_rub" #"wood_smooth" # "wood_rough" 
+# NUM_RUNS=10
 SCRIPT_NAME="collect_model_input.py"
+
+OBJECT="test" # "blue_cylinder" # "colored_cubes"
+SURFACE=""
+NUM_RUNS=1
 
 # --- 1. PROMPT FOR GROUND TRUTH ---
 echo "=========================================================="

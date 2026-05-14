@@ -4,7 +4,7 @@ import numpy as np
 import panda_py
 from panda_py import libfranka, constants
 from matplotlib import pyplot as plt
-from const import PUSHSET_POSE, PUSHSET_Q, INTER_Q, USE_IK, HOSTNAME
+from phypush_const import PUSHSET_POSE, PUSHSET_Q, INTER_Q, USE_IK, HOSTNAME
 
 # 1. Configuration
 username = 'cobotmakerspace'

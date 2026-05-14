@@ -11,7 +11,7 @@ import panda_py
 from panda_py import libfranka, controllers
 from pathlib import Path
 from phypush_transformer import PhysicsTransformerEstimator
-from const import PUSHSET_POSE, PUSHSET_Q, HOSTNAME
+from phypush_const import PUSHSET_POSE, PUSHSET_Q, HOSTNAME
 
 # ==========================================
 # 1. CONFIGURATION
